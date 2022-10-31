@@ -90,7 +90,9 @@ def weather_message(data, timezone):
     try:
         msg = f"\n🕗{strftime('%H:%M', gmtime(data['dt']))} + {str(int(timezone/3600))}h | "    # 3600s in hr gets difference between timezones
         if 'pop' in data:                               # rain probability
-            msg += f"☔{round(data['pop']*100, 0)}% | "
+            pop = data['pop']
+        else: pop = 0
+        msg += f"☔{round(pop*100, 0)}% | "
         msg += f"🌡️{round(data['main']['temp'], 1)}\N{DEGREE SIGN}C / {round(data['main']['feels_like'], 1)}" \
                f"\N{DEGREE SIGN}C\n" \
                f"Pressure: {data['main']['pressure']}hPa | Humidity: {data['main']['humidity']}%\n" \
