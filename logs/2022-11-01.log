@@ -1,0 +1,29 @@
+2022-11-01 10:42:57,819 - INFO - Bot is running..
+2022-11-01 10:42:57,819 - INFO - Scheduler started
+2022-11-01 10:44:06,677 - INFO - Received signal 2 (SIGINT), stopping...
+2022-11-01 10:44:06,677 - INFO - Scheduler has been shut down
+2022-11-01 10:44:06,860 - WARNING - Exiting immediately!
+2022-11-01 10:44:08,822 - INFO - Bot is running..
+2022-11-01 10:44:08,823 - INFO - Scheduler started
+2022-11-01 10:44:55,492 - INFO - Received signal 2 (SIGINT), stopping...
+2022-11-01 10:44:55,492 - INFO - Scheduler has been shut down
+2022-11-01 10:44:55,635 - WARNING - Exiting immediately!
+2022-11-01 10:44:57,715 - INFO - Bot is running..
+2022-11-01 10:44:57,716 - INFO - Scheduler started
+2022-11-01 10:59:41,576 - INFO - Bot is running..
+2022-11-01 10:59:41,576 - ERROR - city not found
+NoneType: None
+2022-11-01 10:59:41,576 - WARNING - Update {'update_id': 190168388, 'message': {'text': '/today skdjhgf 54365647', 'message_id': 620, 'caption_entities': [], 'photo': [], 'supergroup_chat_created': False, 'delete_chat_photo': False, 'new_chat_photo': [], 'channel_chat_created': False, 'entities': [{'length': 6, 'offset': 0, 'type': 'bot_command'}], 'new_chat_members': [], 'chat': {'type': 'private', 'id': 5616914626, 'first_name': 'Krzysztof'}, 'date': 1667296779, 'group_chat_created': False, 'from': {'language_code': 'en', 'first_name': 'Krzysztof', 'id': 5616914626, 'is_bot': False}}} caused error City not found.
+2022-11-01 11:03:33,206 - INFO - {'update_id': 190168389, 'message': {'text': '/now kolbuszowa', 'message_id': 622, 'caption_entities': [], 'photo': [], 'supergroup_chat_created': False, 'delete_chat_photo': False, 'new_chat_photo': [], 'channel_chat_created': False, 'entities': [{'length': 4, 'offset': 0, 'type': 'bot_command'}], 'new_chat_members': [], 'chat': {'type': 'private', 'id': 5616914626, 'first_name': 'Krzysztof'}, 'date': 1667297009, 'group_chat_created': False, 'from': {'language_code': 'en', 'first_name': 'Krzysztof', 'id': 5616914626, 'is_bot': False}}} | kolbuszowa 36-100
+2022-11-01 11:13:31,061 - INFO - Received signal 2 (SIGINT), stopping...
+2022-11-01 11:13:31,061 - INFO - Scheduler has been shut down
+2022-11-01 11:13:31,204 - WARNING - Exiting immediately!
+2022-11-01 13:17:36,929 - INFO - Bot is running..
+2022-11-01 13:17:36,930 - INFO - Scheduler started
+2022-11-01 13:19:54,861 - INFO - Received signal 2 (SIGINT), stopping...
+2022-11-01 13:19:54,861 - INFO - Scheduler has been shut down
+2022-11-01 13:19:55,028 - WARNING - Exiting immediately!
+2022-11-01 15:28:58,802 - INFO - Bot is running..
+2022-11-01 15:29:18,855 - INFO - Bot is running..
+2022-11-01 15:32:31,833 - INFO - Bot is running..
+2022-11-01 15:33:07,047 - INFO - Bot is running..
