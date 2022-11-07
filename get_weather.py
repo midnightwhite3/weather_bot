@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 from datetime import datetime
 from time import gmtime, strftime, time
-import settings
+from settings import telegram_key, weather_key, logger
 import re
 
 # TODO: merge weather_now and weather_tomorrow functions?
@@ -33,6 +33,7 @@ def find_postal_code(city):
         raw_pcode = re.sub(r'<.*?>', '', str(tagged_pcode[pcode_index]))        # strip post code from html tags.
         if raw_pcode == 'None':     # no post_code, return error msg
             return not_found
+        logger.info("Post code found on GEONAMES.ORG")
         return raw_pcode        # pcode found, return it
     except ValueError:      # if 'TRY' does not find post code, it raises value error.
         w_url = requests.get(f"https://en.wikipedia.org/wiki/{city}").text
@@ -41,52 +42,50 @@ def find_postal_code(city):
         raw_pcode = re.sub(r"<.*?>", '', str(tagged_pcode))
         if raw_pcode == 'None':
             return not_found
+        logger.info("Post code found on WIKIPEDIA.ORG")
         return raw_pcode
  
 
 def get_forecast_json(city, post_code):
     """Fetches json response from open weather API, 5 days."""
-    json_response = requests.get(f"http://api.openweathermap.org/data/2.5/forecast?q={city},{post_code}&appid={settings.weather_key}&units=metric").json()
+    json_response = requests.get(f"http://api.openweathermap.org/data/2.5/forecast?q={city},{post_code}&appid={weather_key}&units=metric").json()
     return json_response
 
 
 def get_weather_now_json(city, post_code):
     """Fetches json response from open weather API, current."""
-    json_response = requests.get(f"https://api.openweathermap.org/data/2.5/weather?q={city},{post_code}&appid={settings.weather_key}&units=metric").json()
+    json_response = requests.get(f"https://api.openweathermap.org/data/2.5/weather?q={city},{post_code}&appid={weather_key}&units=metric").json()
     return json_response
 
 
 def get_country(data):
-    from weather_bot import logging
     try:
         if 'sys' in data: msg = f"Country: {data['sys']['country']}\n"
         elif 'city' in data: msg = f"Country: {data['city']['country']}\n"
         return msg
     except Exception:
-        logging.exception("Exception occured.", exc_info=True)
+        logger.exception("Exception occured.", exc_info=True)
         pass
 
 
 def check_status(json_response):
-    from weather_bot import logging     # solution to circular import if its outside function
     err_cod = str(json_response['cod']) # status code returned from openweather
     msg = "No message in response."
     if  'message' in json_response:      # openweather API not always returns this in response, KEY error solution
         msg = json_response['message']
     if err_cod == '404':                # 404 code means no city with that post code in DB
-        logging.exception(msg, exc_info=True)   # log it
+        logger.exception(msg, exc_info=True)   # log it
         raise StatusError("City not found.")
     elif err_cod == '429':              # im using free plan so i have call limit, 429 is a code for that error
-        logging.warning(msg, exc_info=True)
+        logger.warning(msg, exc_info=True)
         raise StatusError("I've reached the limit of server calls for now. Try again later or come back tomorrow.")
     elif err_cod != '200':      # other errors not specified by openweather, status 200 is SUCCESS
-        logging.error(msg=(msg, err_cod), exc_info=True)
+        logger.error(msg=(msg, err_cod), exc_info=True)
         raise StatusError("Something is wrong on the server side. Try again later since I'm trying to fix this ASAP.")
     else: pass  # no errors, pass it
 
 def weather_message(data, timezone):
     """Converts json response to actual message, readable for the user."""
-    from weather_bot import logging
     try:
         msg = f"\n🕗{strftime('%H:%M', gmtime(data['dt']))} + {str(int(timezone/3600))}h | "    # 3600s in hr gets difference between timezones
         if 'pop' in data:                               # rain probability
@@ -117,7 +116,7 @@ def weather_message(data, timezone):
             msg += f" | Gusting: {round(data['wind']['gust']*3.6, 2)}km/h\n"
         return msg
     except Exception:       # unexpected errors catch, to not return an errors msg to the user on telegram
-        logging.exception("Unknown error.", exc_info=True)
+        logger.exception("Unknown error.", exc_info=True)
         return "Something is wrong, try again later."
     
 
@@ -177,5 +176,5 @@ def get_wind_direction(degree):
 
 def get_telegram_reponse():
     """I used it for debugging manually purposes, to actually see the data flow."""
-    response = requests.get(f"https://api.telegram.org/bot{settings.telegram_key}/getUpdates").json()
+    response = requests.get(f"https://api.telegram.org/bot{telegram_key}/getUpdates").json()
     print(response)

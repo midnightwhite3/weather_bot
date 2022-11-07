@@ -1,7 +1,8 @@
-import logging
 from telegram.ext import *  # not a good habit to import all. Func names can overrirde themselves
 import get_weather
-import settings
+from settings import logger, telegram_key
+import store_data
+import traceback
 # from .data import subscriptions
 
 # TODO: possibility to save your own location and make program fetch weather based on this location?
@@ -10,10 +11,7 @@ import settings
 # TODO: fetch the location and allow the command funcs to when len(context.args) == 0
 # no location was given, it means user wants the weather for his own.
 
-logging.basicConfig(level=logging.INFO, filename=f'logs\\{get_weather.today}.log', filemode='a',
-                    format="%(asctime)s - %(levelname)s - %(message)s")
-
-logging.info("Bot is running..")
+logger.info("Bot is running..")
 
 
 def weather_msg_conditional(update, context, weather_func):
@@ -32,10 +30,10 @@ def weather_msg_conditional(update, context, weather_func):
         post_code = get_weather.find_postal_code(city)      # so we look up the post code
     if len(post_code) > 20:     # if func doesnt find post_code it returns error_msg which is long
         update.message.reply_text(post_code)    # error_msg
-        logging.info(f"Post code couldn't be found for {city.upper()}.")    # log for every lack of postcode
+        logger.info(f"Post code couldn't be found for {city.upper()}.")    # log for every lack of postcode
     else:                       # found post code, success
         update.message.reply_text(f"{city.title()} {post_code} | {weather_func(city, post_code)}")
-        logging.info(f"{update} | {city} {post_code}")      # log every time user eneters a msg (error yet, change it)
+        logger.info(f"user_id: {update.message.from_user.id} | msg: {city} {post_code}")      # log every time user eneters a msg with success
 
 
 def today_weather_command(update, context):
@@ -54,9 +52,18 @@ def now_weather_command(update, context):
 
 
 def save_city_command(update, context):
-    city = ' '.join(context.args)
-    user_id = update.message.from_user.id
-    update.message.reply_text(user_id)
+    try:
+        city = ' '.join(context.args)
+        user_name = update.message.from_user.name
+        user_id = update.message.from_user.id
+        if not store_data.user_exists(user_id):
+            store_data.store_user(user_id, user_name)
+        store_data.store_location(user_id, city)
+        update.message.reply_text(f"{city.title()} has been saved successfully!")
+        logger.info(f"{city.title()} for user {user_id} has been updated.")
+    except:
+        update.message.reply_text(traceback.print_exc())
+        logger.error(traceback.print_exc())
 
 
 def help_command(update, context):
@@ -95,6 +102,10 @@ def help_command(update, context):
     update.message.reply_text(msg)
 
 
+def subscribe_command(update, context):
+    pass
+
+
 # def handle_message(update, context):
 #     text = str(update.message.text).lower()
 #     update.message.reply_text(text)
@@ -103,12 +114,12 @@ def help_command(update, context):
 def error(update, context):
     """Func logs the error and returns EXPECTED errors msgs. If the error is not
         catched by the previous functions, it returns defined below message to the user."""
-    logging.warning(f"Update {update} caused error {context.error}")
+    logger.error(f"Update {update} caused error {context.error}")
     update.message.reply_text(f"Unexpected error occured. Try again later.")
 
 
 if __name__ == '__main__':
-    updater = Updater(settings.telegram_key, use_context=True)
+    updater = Updater(telegram_key, use_context=True)
     dp = updater.dispatcher
 
     dp.add_handler(CommandHandler('today', today_weather_command))
@@ -116,7 +127,7 @@ if __name__ == '__main__':
     dp.add_handler(CommandHandler('tomorrow', tomorrow_weather_command))
     # dp.add_handler(MessageHandler(Filters.text, handle_message))
     dp.add_handler(CommandHandler('help', help_command))
-    dp.add_handler(CommandHandler('city', save_city_command))
+    dp.add_handler(CommandHandler('save_city', save_city_command))
     dp.add_error_handler(error)
 
     updater.start_polling(2.0)
