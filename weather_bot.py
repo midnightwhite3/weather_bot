@@ -3,11 +3,8 @@ import get_weather
 from settings import logger, telegram_key
 import store_data
 import traceback
-# from .data import subscriptions
 
-# TODO: possibility to save your own location and make program fetch weather based on this location?
 # TODO: enable daily message about the weather based on saved city?
-# TODO: check if telegram allows users to save their location.
 # TODO: fetch the location and allow the command funcs to when len(context.args) == 0
 # no location was given, it means user wants the weather for his own.
 
@@ -103,7 +100,24 @@ def help_command(update, context):
 
 
 def subscribe_command(update, context):
+    user_id = update.message.from_user.id
+    city = context.args[0]
+    if len(context.args) == 2:
+        hour = context.args[1]
+    store_data.subscribe(user_id, city, hour=hour)
     pass
+
+
+def set_msg_hour_command(update, context):
+    user_id = update.message.from_user.id
+    msg_hour = context.args[0]
+    if not store_data.is_time_valid(msg_hour):
+        update.message.reply_text(f"{msg_hour} is not valid. Make sure you use 24hr format. Example:\n \
+        06:00:00")
+        return
+    store_data.set_msg_hour(user_id, msg_hour)
+    logger.info(f"{user_id} updated 'send_msg_hour' as {msg_hour}.")
+    update.message.reply_text(f"Messaging hour set successfully!")  # search DB to inform user if he is subbed or not
 
 
 # def handle_message(update, context):
@@ -114,7 +128,7 @@ def subscribe_command(update, context):
 def error(update, context):
     """Func logs the error and returns EXPECTED errors msgs. If the error is not
         catched by the previous functions, it returns defined below message to the user."""
-    logger.error(f"Update {update} caused error {context.error}")
+    logger.error(f"Update {update} caused error {context.error}") # message too long and error not clear enough, change it
     update.message.reply_text(f"Unexpected error occured. Try again later.")
 
 
@@ -128,6 +142,8 @@ if __name__ == '__main__':
     # dp.add_handler(MessageHandler(Filters.text, handle_message))
     dp.add_handler(CommandHandler('help', help_command))
     dp.add_handler(CommandHandler('save_city', save_city_command))
+    dp.add_handler(CommandHandler('sub', subscribe_command))
+    dp.add_handler(CommandHandler('set_hour', set_msg_hour_command))
     dp.add_error_handler(error)
 
     updater.start_polling(2.0)
