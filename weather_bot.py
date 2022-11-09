@@ -1,14 +1,25 @@
 from telegram.ext import *  # not a good habit to import all. Func names can overrirde themselves
-import get_weather
+import get_weather as gw
 from settings import logger, telegram_key
-import store_data
+import store_data as sd
 import traceback
+import re
 
 # TODO: enable daily message about the weather based on saved city?
 # TODO: fetch the location and allow the command funcs to when len(context.args) == 0
 # no location was given, it means user wants the weather for his own.
+# TODO: write dict for error messages and fetch them from there?
+# TODO: validate all users input. One found - remove any special chars from city when calling weather functions
+# TODO: create validators.py for user input validation
 
 logger.info("Bot is running..")
+
+
+def validate_sub(sub):
+    try:
+        return re.search(r"today|now|tomorrow", sub).group()
+    except AttributeError:  # throws attr error when no match found
+        return False
 
 
 def weather_msg_conditional(update, context, weather_func):
@@ -16,15 +27,15 @@ def weather_msg_conditional(update, context, weather_func):
     if len(context.args) == 0:
         return update.message.reply_text("You need to give the city name.") # return to stop func right there, if not it continues and returns 2 error messages
     elif len(context.args) > 1:       # check i user msg has more than 1 word
-        if not get_weather.has_number(context.args[-1]):    # verify that the last word is a post code or not
+        if not gw.has_number(context.args[-1]):    # verify that the last word is a post code or not
             city = " ".join(context.args)       # if its not post code, that means all words are a city name
-            post_code = get_weather.find_postal_code(city)  # in that case we look for the post code
+            post_code = gw.find_postal_code(city)  # in that case we look for the post code
         else:
             city = " ".join(context.args[:-1])      # in that case user gave us the post code himself
             post_code = context.args[-1]            # so we dont look it up
     else:                                           # if user msg has 1 word it means he gave just the city name
         city = context.args[0]
-        post_code = get_weather.find_postal_code(city)      # so we look up the post code
+        post_code = gw.find_postal_code(city)      # so we look up the post code
     if len(post_code) > 20:     # if func doesnt find post_code it returns error_msg which is long
         update.message.reply_text(post_code)    # error_msg
         logger.info(f"Post code couldn't be found for {city.upper()}.")    # log for every lack of postcode
@@ -35,27 +46,30 @@ def weather_msg_conditional(update, context, weather_func):
 
 def today_weather_command(update, context):
     """Today weather."""
-    weather_msg_conditional(update, context, get_weather.weather_today)
+    weather_msg_conditional(update, context, gw.weather_today)
 
 
 def tomorrow_weather_command(update, context):
     """Tomorrow weather."""
-    weather_msg_conditional(update, context, get_weather.weather_tomorrow)
+    weather_msg_conditional(update, context, gw.weather_tomorrow)
 
 
 def now_weather_command(update, context):
     """Now weather."""
-    weather_msg_conditional(update, context, get_weather.weather_now)
+    weather_msg_conditional(update, context, gw.weather_now)
 
 
 def save_city_command(update, context):
+    """After simple validation stores city for user_id. If user does not exist, storing user first then city."""
     try:
         city = ' '.join(context.args)
+        if gw.has_number(city):
+            update.message.reply_text(f"{city.title()} is not a valid city name.")
         user_name = update.message.from_user.name
         user_id = update.message.from_user.id
-        if not store_data.user_exists(user_id):
-            store_data.store_user(user_id, user_name)
-        store_data.store_location(user_id, city)
+        if not sd.user_exists(user_id):
+            sd.store_user(user_id, user_name)
+        sd.store_location(user_id, city)
         update.message.reply_text(f"{city.title()} has been saved successfully!")
         logger.info(f"{city.title()} for user {user_id} has been updated.")
     except:
@@ -102,27 +116,27 @@ def help_command(update, context):
 def subscribe_command(update, context):
     user_id = update.message.from_user.id
     city = context.args[0]
-    if len(context.args) == 2:
-        hour = context.args[1]
-    store_data.subscribe(user_id, city, hour=hour)
-    pass
+    sub_for = validate_sub(' '.join(context.args))
+    hour = sd.is_time(' '.join(context.args))
+    if not sub_for:
+        update.message.reply_text(f"You must specify subscription type.\nOptions are - tomorrow, today, now.\nExample: \
+        /sub new york today 08:00:00")
+        return
+    if not hour:
+        hour = '06:00:00'
+    sd.subscribe(user_id, sub_for, city, hour=hour)
 
 
 def set_msg_hour_command(update, context):
     user_id = update.message.from_user.id
     msg_hour = context.args[0]
-    if not store_data.is_time_valid(msg_hour):
+    if not sd.is_time(msg_hour):
         update.message.reply_text(f"{msg_hour} is not valid. Make sure you use 24hr format. Example:\n \
         06:00:00")
         return
-    store_data.set_msg_hour(user_id, msg_hour)
+    sd.set_msg_hour(user_id, msg_hour)
     logger.info(f"{user_id} updated 'send_msg_hour' as {msg_hour}.")
     update.message.reply_text(f"Messaging hour set successfully!")  # search DB to inform user if he is subbed or not
-
-
-# def handle_message(update, context):
-#     text = str(update.message.text).lower()
-#     update.message.reply_text(text)
 
 
 def error(update, context):
@@ -139,7 +153,6 @@ if __name__ == '__main__':
     dp.add_handler(CommandHandler('today', today_weather_command))
     dp.add_handler(CommandHandler('now', now_weather_command))
     dp.add_handler(CommandHandler('tomorrow', tomorrow_weather_command))
-    # dp.add_handler(MessageHandler(Filters.text, handle_message))
     dp.add_handler(CommandHandler('help', help_command))
     dp.add_handler(CommandHandler('save_city', save_city_command))
     dp.add_handler(CommandHandler('sub', subscribe_command))

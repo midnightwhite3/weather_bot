@@ -8,14 +8,18 @@ import re
 # TODO: write specified exceptions for funcs
 
 sub_type = {
-    0: 'unsubbed',
-    1: 'today',
-    2: 'tomorrow',
+    'unsubbed': 0,
+    'now': 1,
+    'today': 2,
+    'tomorrow': 3,
 }
 
 
-def is_time_valid(time):
-    return bool(re.search(r"^(2[0-3]|[01]?[0-9]):([0-5]?[0-9]):([0-5]?[0-9])$", time))
+def is_time(time):
+    try:
+        return re.search(r"^(2[0-3]|[01]?[0-9]):([0-5]?[0-9]):([0-5]?[0-9])$", time).group()
+    except AttributeError:
+        return False
 
 
 class DBConnection:
@@ -107,6 +111,7 @@ def subscribe(user_id: int, sub, msg_hour='06:00:00', city=None):
         with DBConnection() as cur:
             cur.execute(f"""UPDATE "user"
             SET subbed_for = {sub},
+            city = '{city.title()}',
             subbed_date = current_timestamp,
             send_msg_hour = '{msg_hour}'
             WHERE user_id = {user_id}""")
