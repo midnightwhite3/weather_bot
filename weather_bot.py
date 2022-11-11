@@ -6,8 +6,6 @@ import traceback
 import re
 
 # TODO: enable daily message about the weather based on saved city?
-# TODO: fetch the location and allow the command funcs to when len(context.args) == 0
-# no location was given, it means user wants the weather for his own.
 # TODO: write dict for error messages and fetch them from there?
 # TODO: validate all users input. One found - remove any special chars from city when calling weather functions
 # TODO: create validators.py for user input validation
@@ -81,7 +79,7 @@ def save_city_command(update, context):
 
 def help_command(update, context):
     """Command displaying detailed informations about usage to the user."""
-    msg = """I can show you the weather for any city in the world u ask!
+    msg = ("""I can show you the weather for any city in the world u ask!
     In order to do that, you must use one of the commands:
     -/today - weather for today with 3hour timestamps
     -/tomorrow - weather for tomorrow with 3hour timestamps
@@ -111,36 +109,37 @@ def help_command(update, context):
     - Rain or snow volume
     - Wind speed | wind speed in gusts
     - Time of sunrise and sunset
-    """
+    """)
     update.message.reply_text(msg)
 
 
 def subscribe_command(update, context):
     user_id = update.message.from_user.id
-    subbed = validate_sub_type(' '.join(context.args))      # if user didnt type on of subs type, returns False
+    subbed = validate_sub_type(' '.join(context.args))      # if user didnt type sub type, returns False
     hour = sd.is_time(' '.join(context.args))
-    if not subbed:
-        update.message.reply_text(f"You must specify subscription type.\nOptions are - tomorrow, today, now.\nExample: \
-        /sub new york today 08:00:00")
+    msg = ""
+    if type(subbed) == bool:
+        update.message.reply_text(f"""You must specify subscription type.\nOptions are - tomorrow, today, now.\nExample:
+        /sub new york today 08:00:00""")
         return
     sub = sd.sub_type[validate_sub_type(' '.join(context.args))]    # user typed sub type, use dict to convert it to numeric
-    if not hour:
+    if type(hour) == bool:
         hour = '06:00:00'
-        update.message.reply_text(f"You didn't specify hour or gave wrong format so I set it to be 07:00:00. \
-            To change that, use '/set_hour HH:MM:SS'.")
-    if hour and subbed:
+        msg += (f"""You didn't specify hour or gave wrong format so I set it to be 06:00:00.\nTo change that, use '/set_hour HH:MM:SS'.""")
+    if type((hour and subbed)) == str:
         city = " ".join(context.args[:-2])
     else:
         city = " ".join(context.args[:-1])
     sd.subscribe(user_id, sub, hour, city)
+    update.message.reply_text(msg + f"Subbed successfully. You will receive weather for {city.title()} at {hour} everyday.")
+    logger.info(f"SUB - user: {user_id} | subbed for: {sub}")
 
 
 def set_msg_hour_command(update, context):
     user_id = update.message.from_user.id
     msg_hour = sd.is_time(' '.join(context.args))
     if not msg_hour:
-        update.message.reply_text(f"{msg_hour} is not valid. Make sure you use 24hr format. Example:\n \
-        06:00:00")
+        update.message.reply_text(f"""{msg_hour} is not valid. Make sure you use 24hr format. Example:\n06:00:00""")
         return
     sd.set_msg_hour(user_id, msg_hour)
     logger.info(f"{user_id} updated 'send_msg_hour' as {msg_hour}.")

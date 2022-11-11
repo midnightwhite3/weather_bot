@@ -17,7 +17,7 @@ sub_type = {
 
 def is_time(time):
     try:
-        return re.search(r"^(2[0-3]|[01]?[0-9]):([0-5]?[0-9]):([0-5]?[0-9])$", time).group()
+        return re.search(r"\b(2[0-3]|[01]?[0-9]):([0-5][0-9]):([0-5][0-9])\b", time).group()
     except AttributeError:
         return False
 

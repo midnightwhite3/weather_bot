@@ -32,3 +32,48 @@
 2022-11-11 10:01:49,635 - INFO - Received signal 2 (SIGINT), stopping...
 2022-11-11 10:01:49,635 - INFO - Scheduler has been shut down
 2022-11-11 10:01:49,818 - WARNING - Exiting immediately!
+2022-11-11 17:07:58,655 - INFO - Bot is running..
+2022-11-11 17:07:58,656 - INFO - Scheduler started
+2022-11-11 17:11:14,963 - INFO - Received signal 2 (SIGINT), stopping...
+2022-11-11 17:11:14,963 - INFO - Scheduler has been shut down
+2022-11-11 17:11:15,114 - WARNING - Exiting immediately!
+2022-11-11 17:16:34,130 - INFO - Bot is running..
+2022-11-11 17:16:34,131 - INFO - Scheduler started
+2022-11-11 17:19:23,210 - INFO - Received signal 2 (SIGINT), stopping...
+2022-11-11 17:19:23,210 - INFO - Scheduler has been shut down
+2022-11-11 17:19:23,353 - WARNING - Exiting immediately!
+2022-11-11 19:15:59,276 - INFO - Bot is running..
+2022-11-11 19:15:59,278 - INFO - Scheduler started
+2022-11-11 19:16:02,651 - INFO - Received signal 2 (SIGINT), stopping...
+2022-11-11 19:16:02,651 - INFO - Scheduler has been shut down
+2022-11-11 19:16:02,794 - WARNING - Exiting immediately!
+2022-11-11 19:16:22,148 - INFO - Bot is running..
+2022-11-11 19:16:22,148 - INFO - Scheduler started
+2022-11-11 19:16:40,772 - INFO - User: 5616914626 subbed for 2
+2022-11-11 19:23:47,274 - INFO - Received signal 2 (SIGINT), stopping...
+2022-11-11 19:23:47,274 - INFO - Scheduler has been shut down
+2022-11-11 19:23:47,578 - WARNING - Exiting immediately!
+2022-11-11 19:30:45,254 - INFO - Bot is running..
+2022-11-11 19:30:45,255 - INFO - Scheduler started
+2022-11-11 19:31:03,838 - INFO - User: 5616914626 subbed for 3
+2022-11-11 19:32:29,049 - INFO - Received signal 2 (SIGINT), stopping...
+2022-11-11 19:32:29,049 - INFO - Scheduler has been shut down
+2022-11-11 19:32:29,209 - WARNING - Exiting immediately!
+2022-11-11 19:32:33,128 - INFO - Bot is running..
+2022-11-11 19:32:33,129 - INFO - Scheduler started
+2022-11-11 19:32:45,495 - INFO - User: 5616914626 subbed for 2
+2022-11-11 19:33:40,968 - INFO - Received signal 2 (SIGINT), stopping...
+2022-11-11 19:33:40,969 - INFO - Scheduler has been shut down
+2022-11-11 19:33:47,616 - WARNING - Exiting immediately!
+2022-11-11 19:39:38,415 - INFO - Bot is running..
+2022-11-11 19:39:38,416 - INFO - Scheduler started
+2022-11-11 19:40:06,912 - ERROR - Update {'message': {'caption_entities': [], 'date': 1668192006, 'photo': [], 'group_chat_created': False, 'new_chat_members': [], 'text': '/sub kolbuszowa dolna now 10:00:00', 'channel_chat_created': False, 'entities': [{'offset': 0, 'length': 4, 'type': 'bot_command'}], 'message_id': 695, 'delete_chat_photo': False, 'chat': {'first_name': 'Krzysztof', 'type': 'private', 'id': 5616914626}, 'new_chat_photo': [], 'supergroup_chat_created': False, 'from': {'first_name': 'Krzysztof', 'is_bot': False, 'language_code': 'en', 'id': 5616914626}}, 'update_id': 190168427} caused error local variable 'msg' referenced before assignment
+2022-11-11 19:42:42,360 - INFO - Received signal 2 (SIGINT), stopping...
+2022-11-11 19:42:42,360 - INFO - Scheduler has been shut down
+2022-11-11 19:42:45,456 - WARNING - Exiting immediately!
+2022-11-11 19:42:47,595 - INFO - Bot is running..
+2022-11-11 19:42:47,595 - INFO - Scheduler started
+2022-11-11 19:42:56,914 - INFO - User: 5616914626 subbed for 1
+2022-11-11 19:44:59,520 - INFO - Received signal 2 (SIGINT), stopping...
+2022-11-11 19:44:59,520 - INFO - Scheduler has been shut down
+2022-11-11 19:44:59,655 - WARNING - Exiting immediately!
