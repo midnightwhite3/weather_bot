@@ -11,11 +11,13 @@ import re
 # TODO: write dict for error messages and fetch them from there?
 # TODO: validate all users input. One found - remove any special chars from city when calling weather functions
 # TODO: create validators.py for user input validation
+# TODO: check if msg hours includes timezoning, maybe user must specify it?
+# TODO: no error message for user if daa isnt saved to DB
 
 logger.info("Bot is running..")
 
 
-def validate_sub(sub):
+def validate_sub_type(sub):
     try:
         return re.search(r"today|now|tomorrow", sub).group()
     except AttributeError:  # throws attr error when no match found
@@ -115,22 +117,28 @@ def help_command(update, context):
 
 def subscribe_command(update, context):
     user_id = update.message.from_user.id
-    city = context.args[0]
-    sub_for = validate_sub(' '.join(context.args))
+    subbed = validate_sub_type(' '.join(context.args))      # if user didnt type on of subs type, returns False
     hour = sd.is_time(' '.join(context.args))
-    if not sub_for:
+    if not subbed:
         update.message.reply_text(f"You must specify subscription type.\nOptions are - tomorrow, today, now.\nExample: \
         /sub new york today 08:00:00")
         return
+    sub = sd.sub_type[validate_sub_type(' '.join(context.args))]    # user typed sub type, use dict to convert it to numeric
     if not hour:
         hour = '06:00:00'
-    sd.subscribe(user_id, sub_for, city, hour=hour)
+        update.message.reply_text(f"You didn't specify hour or gave wrong format so I set it to be 07:00:00. \
+            To change that, use '/set_hour HH:MM:SS'.")
+    if hour and subbed:
+        city = " ".join(context.args[:-2])
+    else:
+        city = " ".join(context.args[:-1])
+    sd.subscribe(user_id, sub, hour, city)
 
 
 def set_msg_hour_command(update, context):
     user_id = update.message.from_user.id
-    msg_hour = context.args[0]
-    if not sd.is_time(msg_hour):
+    msg_hour = sd.is_time(' '.join(context.args))
+    if not msg_hour:
         update.message.reply_text(f"{msg_hour} is not valid. Make sure you use 24hr format. Example:\n \
         06:00:00")
         return

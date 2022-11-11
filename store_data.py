@@ -12,7 +12,7 @@ sub_type = {
     'now': 1,
     'today': 2,
     'tomorrow': 3,
-}
+}                   # maybe unnecessary complication? just store it as it is (a word).
 
 
 def is_time(time):
@@ -66,7 +66,7 @@ def user_exists(user_id: int):
             cur.execute(f"""SELECT user_id FROM "user" WHERE user_id = {user_id}""")
             return bool(cur.fetchone())
     except:
-        logger.error(traceback.print_exc())
+        logger.error(traceback.print_exc()) # logs None error, change it
     # exists = bool(cur.fetchone())
     # if exists:
     #     return "User already exists."
