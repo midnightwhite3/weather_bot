@@ -6,6 +6,8 @@ import re
 # TODO: functions there are not yet completed. Error handling, conditional statements, any other actions
 # to improve these functions
 # TODO: write specified exceptions for funcs
+# TODO: write try on db init to check if its connected if noit raise the error
+# TODO: improve DBError traceback
 
 sub_type = {
     'unsubbed': 0,
@@ -13,6 +15,17 @@ sub_type = {
     'today': 2,
     'tomorrow': 3,
 }                   # maybe unnecessary complication? just store it as it is (a word).
+
+db_err = "I have data related problem, fixing this ASAP."
+
+
+class DBError(Exception):
+    def __init__(self, message="I have data related problem, fixing this ASAP.", *args):
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
 
 
 def is_time(time):
@@ -32,12 +45,16 @@ class DBConnection:
     
     def __enter__(self):
         """Everything in 'WITH'."""
+        # try:
         return self.cur
+        # except Exception as error:
+        #     logger.error(f"ERROR: {error} | TYPE: {type(error)}")
+        #     raise DBError()
 
     def __exit__(self, err_type, err_value, traceback):
         """Commits changes and closes the DB connection."""
         if err_type and err_value:
-            self.connection.rollback()
+            self.connection.rollback()  # read about rollback
         self.connection.commit()
         self.cur.close()
         self.connection.close()
@@ -54,9 +71,13 @@ def db_init(db_name, db_user, db_pswrd, db_host=None, db_port=None):
 def is_subbed(user_id: int):
     """Return if user is subbed or not. Not in use for now - SUBSCRIBE column dropped from DB,
     replaced by subbed_for"""
-    with DBConnection() as cur:
-        cur.execute(f"""SELECT * FROM "user" WHERE user_id = {user_id} AND subscribed""")
-        return bool(cur.fetchone())
+    try:
+        with DBConnection() as cur:
+            cur.execute(f"""SELECT * FROM "user" WHERE user_id = {user_id} AND subscribed""")
+            return bool(cur.fetchone())
+    except Exception as error:      # bad habit, better to write more specific exceptions - change it
+        logger.error(f"ERROR: {error} | TYPE: {type(error)}")
+        raise DBError() # needed for message feedback display at weather_bot.py
 
 
 def user_exists(user_id: int):
@@ -65,12 +86,9 @@ def user_exists(user_id: int):
         with DBConnection() as cur:
             cur.execute(f"""SELECT user_id FROM "user" WHERE user_id = {user_id}""")
             return bool(cur.fetchone())
-    except:
-        logger.error(traceback.print_exc()) # logs None error, change it
-    # exists = bool(cur.fetchone())
-    # if exists:
-    #     return "User already exists."
-    # return "User doesnt exist"
+    except Exception as error:
+        logger.error(f"ERROR: {error} | TYPE: {type(error)}")
+        raise DBError()
 
 
 def store_user(user_id: int, user_name: str):
@@ -81,6 +99,7 @@ def store_user(user_id: int, user_name: str):
             ({user_id}, '{user_name}')""")
     except:
         logger.error(traceback.print_exc())
+        raise DBError()
 
 
 def is_location(user_id: int):
@@ -89,8 +108,9 @@ def is_location(user_id: int):
         with DBConnection() as cur:
             cur.execute(f"""SELECT city FROM "user" WHERE user_id = {user_id}""")
             return bool(cur.fetchone())
-    except:
-        logger.error(traceback.print_exc())
+    except Exception as error:
+        logger.error(f"ERROR: {error} | TYPE: {type(error)}")
+        raise DBError()
 
 
 def store_location(user_id: int, city: str):
@@ -100,8 +120,9 @@ def store_location(user_id: int, city: str):
             cur.execute(f"""UPDATE "user"
             SET city = '{city}'
             WHERE user_id = {user_id}""")
-    except:
-        logger.error(traceback.print_exc())
+    except Exception as error:
+        logger.error(f"ERROR: {error} | TYPE: {type(error)}")
+        raise DBError()
 
 
 def subscribe(user_id: int, sub, msg_hour='06:00:00', city=None):
@@ -115,8 +136,21 @@ def subscribe(user_id: int, sub, msg_hour='06:00:00', city=None):
             subbed_date = current_timestamp,
             send_msg_hour = '{msg_hour}'
             WHERE user_id = {user_id}""")
-    except:
-        logger.error(traceback.print_exc())
+    except Exception as error:
+        logger.error(f"ERROR: {error} | TYPE: {type(error)}")
+        raise DBError()
+
+
+def unsubscribe(user_id: int):
+    """Sets subscription to 0 in DB, which is unsubbed according to dictionary at the beggining of the file."""
+    try:
+        with DBConnection as cur:
+            cur.execute(f"""Update "user"
+            SET subbed_for = {sub_type['unsubbed']}
+            WHERE user_id = {user_id}""")
+    except Exception as error:
+        logger.error(f"ERROR: {error} | TYPE: {type(error)}")
+        raise DBError()
 
 
 def set_msg_hour(user_id: int, msg_hour):
@@ -126,8 +160,9 @@ def set_msg_hour(user_id: int, msg_hour):
             cur.execute(f"""UPDATE "user"
             SET send_msg_hour = '{msg_hour}'
             WHERE user_id = {user_id}""")
-    except:
-        logger.error(traceback.print_exc())
+    except Exception as error:
+        logger.error(f"ERROR: {error} | TYPE: {type(error)}")
+        raise DBError()
 
 
 # def make_query():

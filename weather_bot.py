@@ -141,15 +141,24 @@ def set_msg_hour_command(update, context):
     if not msg_hour:
         update.message.reply_text(f"""{msg_hour} is not valid. Make sure you use 24hr format. Example:\n06:00:00""")
         return
-    sd.set_msg_hour(user_id, msg_hour)
+    try:
+        sd.set_msg_hour(user_id, msg_hour)
+    except Exception:
+        update.message.reply_text("DB error")
+        return
     logger.info(f"{user_id} updated 'send_msg_hour' as {msg_hour}.")
-    update.message.reply_text(f"Messaging hour set successfully!")  # search DB to inform user if he is subbed or not
+    update.message.reply_text(f"Messaging hour set successfully!")  # search DB to inform user if he is subbed or not)
+
+
+def unsub_command(update, context):
+    user_id = update.message.from_user.id
+    pass
 
 
 def error(update, context):
     """Func logs the error and returns EXPECTED errors msgs. If the error is not
         catched by the previous functions, it returns defined below message to the user."""
-    logger.error(f"Update {update} caused error {context.error}") # message too long and error not clear enough, change it
+    logger.error(f"USER ID: {update.message.from_user.id} | MESSAGE: {update.message.text} | ERR: {context.error}")
     update.message.reply_text(f"Unexpected error occured. Try again later.")
 
 
