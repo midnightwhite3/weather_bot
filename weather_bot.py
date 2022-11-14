@@ -1,7 +1,7 @@
 from telegram.ext import *  # not a good habit to import all. Func names can overrirde themselves
 import get_weather as gw
 from settings import logger, telegram_key
-import store_data as sd
+import handle_data as hd
 import traceback
 import re
 
@@ -67,9 +67,9 @@ def save_city_command(update, context):
             update.message.reply_text(f"{city.title()} is not a valid city name.")
         user_name = update.message.from_user.name
         user_id = update.message.from_user.id
-        if not sd.user_exists(user_id):
-            sd.store_user(user_id, user_name)
-        sd.store_location(user_id, city)
+        if not hd.user_exists(user_id):
+            hd.store_user(user_id, user_name)
+        hd.store_location(user_id, city)
         update.message.reply_text(f"{city.title()} has been saved successfully!")
         logger.info(f"{city.title()} for user {user_id} has been updated.")
     except:
@@ -116,13 +116,13 @@ def help_command(update, context):
 def subscribe_command(update, context):
     user_id = update.message.from_user.id
     subbed = validate_sub_type(' '.join(context.args))      # if user didnt type sub type, returns False
-    hour = sd.is_time(' '.join(context.args))
+    hour = hd.is_time(' '.join(context.args))
     msg = ""
     if type(subbed) == bool:
         update.message.reply_text(f"""You must specify subscription type.\nOptions are - tomorrow, today, now.\nExample:
         /sub new york today 08:00:00""")
         return
-    sub = sd.sub_type[validate_sub_type(' '.join(context.args))]    # user typed sub type, use dict to convert it to numeric
+    sub = hd.sub_type[validate_sub_type(' '.join(context.args))]    # user typed sub type, use dict to convert it to numeric
     if type(hour) == bool:
         hour = '06:00:00'
         msg += (f"""You didn't specify hour or gave wrong format so I set it to be 06:00:00.\nTo change that, use '/set_hour HH:MM:SS'.""")
@@ -130,19 +130,19 @@ def subscribe_command(update, context):
         city = " ".join(context.args[:-2])
     else:
         city = " ".join(context.args[:-1])
-    sd.subscribe(user_id, sub, hour, city)
+    hd.subscribe(user_id, sub, hour, city)
     update.message.reply_text(msg + f"Subbed successfully. You will receive weather for {city.title()} at {hour} everyday.")
     logger.info(f"SUB - user: {user_id} | subbed for: {sub}")
 
 
 def set_msg_hour_command(update, context):
     user_id = update.message.from_user.id
-    msg_hour = sd.is_time(' '.join(context.args))
+    msg_hour = hd.is_time(' '.join(context.args))
     if not msg_hour:
         update.message.reply_text(f"""{msg_hour} is not valid. Make sure you use 24hr format. Example:\n06:00:00""")
         return
     try:
-        sd.set_msg_hour(user_id, msg_hour)
+        hd.set_msg_hour(user_id, msg_hour)
     except Exception:
         update.message.reply_text("DB error")
         return

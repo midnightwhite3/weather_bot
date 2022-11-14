@@ -8,6 +8,10 @@ import re
 # TODO: write specified exceptions for funcs
 # TODO: write try on db init to check if its connected if noit raise the error
 # TODO: improve DBError traceback
+# TODO: exception in DBError class to not duck type it in every function
+
+# CHECK ERROR HANDLING ON DB OPERATIONS, SAVE CHANGE SUB DATA, TEST USER INPUTS, WRITE EXCEPTIONS.
+# MOVE ANY VALIDATE FUNC TO VALIDATORS.PY CHECK IF ANYTHING NEEDS TO VALIDE THE USER INPUT
 
 sub_type = {
     'unsubbed': 0,
@@ -16,13 +20,12 @@ sub_type = {
     'tomorrow': 3,
 }                   # maybe unnecessary complication? just store it as it is (a word).
 
-db_err = "I have data related problem, fixing this ASAP."
-
 
 class DBError(Exception):
-    def __init__(self, message="I have data related problem, fixing this ASAP.", *args):
+    def __init__(self, message="I have data base related problem, fixing this ASAP.", *args):
         self.message = message
         super().__init__(self.message)
+
 
     def __str__(self):
         return self.message
@@ -34,15 +37,21 @@ def is_time(time):
     except AttributeError:
         return False
 
-
+# take a closer look to sql alchemy library, may be a better option
 class DBConnection:
     """https://stackoverflow.com/questions/65053690/how-to-create-a-function-that-connects-executes-and-disconnects
     Context manager class. Logs in to DB. 'WITH' statement handles every DB operation. Commits changes and closes DB."""    # more in the link
     def __init__(self):
         """Initializes the connection and PSYCOPG2 cursor to handle DB actions."""
-        self.connection = psc.connect(database=DB_NAME, user=DB_USER, password=DB_PSWRD)
-        self.cur = self.connection.cursor()
+        try:
+            self.connection = psc.connect(database=DB_NAME, user=DB_USER, password=DB_PSWRD)
+            self.cur = self.connection.cursor()
+            logger.info('Connected to database.')
+        except psc.OperationalError as err:
+            logger.error(f"Connection error occured, traceback: {err}\n{type(err)}")
+            raise DBError()
     
+
     def __enter__(self):
         """Everything in 'WITH'."""
         # try:
@@ -51,21 +60,18 @@ class DBConnection:
         #     logger.error(f"ERROR: {error} | TYPE: {type(error)}")
         #     raise DBError()
 
-    def __exit__(self, err_type, err_value, traceback):
-        """Commits changes and closes the DB connection."""
-        if err_type and err_value:
+
+    def __exit__(self, exc_type, exc_value, exc_tb):
+        """Commits changes, closes the DB connection, manages exceptions."""
+        if exc_type:
+            logger.error(f"Following error occured:\n type: {exc_type}\nvalue: {exc_value}\ntraceback: {exc_tb}")
             self.connection.rollback()  # read about rollback
         self.connection.commit()
+        logger.info("Changes commited.")
         self.cur.close()
         self.connection.close()
-        return False
-
-
-def db_init(db_name, db_user, db_pswrd, db_host=None, db_port=None):
-    """No needed anymore."""
-    conn = psc.connect()
-    cur = conn.cursor()
-    return conn, cur;
+        logger.info('Database connection closed.')
+        return False # returning True makes any exceptions silent, continues with code
 
 
 def is_subbed(user_id: int):
