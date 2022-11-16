@@ -9,10 +9,11 @@ import re
 # TODO: write try on db init to check if its connected if noit raise the error
 # TODO: improve DBError traceback
 # TODO: exception in DBError class to not duck type it in every function
+# TODO: validator if user is subscribed
 
 # CHECK ERROR HANDLING ON DB OPERATIONS, SAVE CHANGE SUB DATA, TEST USER INPUTS, WRITE EXCEPTIONS.
 # MOVE ANY VALIDATE FUNC TO VALIDATORS.PY CHECK IF ANYTHING NEEDS TO VALIDE THE USER INPUT
-
+# F STRINGS WITH SQL -> BIG NONO
 sub_type = {
     'unsubbed': 0,
     'now': 1,
@@ -37,7 +38,8 @@ def is_time(time):
     except AttributeError:
         return False
 
-# take a closer look to sql alchemy library, may be a better option
+# take a closer look to sql alchemy library, may be a better option.
+# sql alchemy --> django, pure python to make advanced DB operations.
 class DBConnection:
     """https://stackoverflow.com/questions/65053690/how-to-create-a-function-that-connects-executes-and-disconnects
     Context manager class. Logs in to DB. 'WITH' statement handles every DB operation. Commits changes and closes DB."""    # more in the link
@@ -54,11 +56,7 @@ class DBConnection:
 
     def __enter__(self):
         """Everything in 'WITH'."""
-        # try:
         return self.cur
-        # except Exception as error:
-        #     logger.error(f"ERROR: {error} | TYPE: {type(error)}")
-        #     raise DBError()
 
 
     def __exit__(self, exc_type, exc_value, exc_tb):
@@ -90,7 +88,9 @@ def user_exists(user_id: int):
     """Boolean return if user is present in DB or not."""
     try:
         with DBConnection() as cur:
-            cur.execute(f"""SELECT user_id FROM "user" WHERE user_id = {user_id}""")
+            query = """SELECT user_id FROM "user" WHERE user_id = %s"""
+            data = (user_id,)
+            cur.execute(query, data)
             return bool(cur.fetchone())
     except Exception as error:
         logger.error(f"ERROR: {error} | TYPE: {type(error)}")
@@ -101,8 +101,9 @@ def store_user(user_id: int, user_name: str):
     """Saves user in the DB."""
     try:
         with DBConnection() as cur:
-            cur.execute(f"""INSERT INTO "user" (user_id, user_name) VALUES
-            ({user_id}, '{user_name}')""")
+            cur.execute("""INSERT INTO "user"
+            (user_id, user_name) 
+            VALUES (%s, %s)""", (user_id, user_name))
     except:
         logger.error(traceback.print_exc())
         raise DBError()
@@ -112,7 +113,9 @@ def is_location(user_id: int):
     """Boolean return if location for the user exists."""
     try:
         with DBConnection() as cur:
-            cur.execute(f"""SELECT city FROM "user" WHERE user_id = {user_id}""")
+            query = """SELECT city FROM "user" WHERE user_id = %s"""
+            data = (user_id,)
+            cur.execute(query, data)
             return bool(cur.fetchone())
     except Exception as error:
         logger.error(f"ERROR: {error} | TYPE: {type(error)}")
@@ -123,25 +126,29 @@ def store_location(user_id: int, city: str):
     """Save location for the user in the DB."""
     try:
         with DBConnection() as cur:
-            cur.execute(f"""UPDATE "user"
-            SET city = '{city}'
-            WHERE user_id = {user_id}""")
+            update = """UPDATE "user"
+                     SET city = %s
+                     WHERE user_id = %s"""
+            data = (city, user_id)
+            cur.execute(update, data)
     except Exception as error:
         logger.error(f"ERROR: {error} | TYPE: {type(error)}")
         raise DBError()
 
 
-def subscribe(user_id: int, sub, msg_hour='06:00:00', city=None):
+def subscribe(user_id: int, sub, msg_hour='06:00:00', city=None):   # check why city set to none
     """Saves subscription type for weather messages, hour on which user wants to get the message (default 6am),
     makes a timestamp."""
     try:
         with DBConnection() as cur:
-            cur.execute(f"""UPDATE "user"
-            SET subbed_for = {sub},
-            city = '{city.title()}',
-            subbed_date = current_timestamp,
-            send_msg_hour = '{msg_hour}'
-            WHERE user_id = {user_id}""")
+            update = """UPDATE "user"
+                     SET subbed_for = %s,
+                     city = %s,
+                     subbed_date = current_timestamp,
+                     send_msg_hour = %s
+                     WHERE user_id = %s""" # can swap current_timestamp to datetime.now()
+            data = (sub, city, msg_hour, user_id)
+            cur.execute(update, data)
     except Exception as error:
         logger.error(f"ERROR: {error} | TYPE: {type(error)}")
         raise DBError()
@@ -150,10 +157,15 @@ def subscribe(user_id: int, sub, msg_hour='06:00:00', city=None):
 def unsubscribe(user_id: int):
     """Sets subscription to 0 in DB, which is unsubbed according to dictionary at the beggining of the file."""
     try:
-        with DBConnection as cur:
-            cur.execute(f"""Update "user"
-            SET subbed_for = {sub_type['unsubbed']}
-            WHERE user_id = {user_id}""")
+        with DBConnection() as cur:
+            update = """UPDATE "user"
+                     SET subbed_for = %s,
+                     city = %s,
+                     subbed_date = %s,
+                     send_msg_hour = %s
+                     WHERE user_id = %s"""
+            data = (sub_type['unsubbed'], None, None, None, user_id)
+            cur.execute(update, data)
     except Exception as error:
         logger.error(f"ERROR: {error} | TYPE: {type(error)}")
         raise DBError()
@@ -163,9 +175,11 @@ def set_msg_hour(user_id: int, msg_hour):
     """Allows to change the weather message sending time."""
     try:
         with DBConnection() as cur:
-            cur.execute(f"""UPDATE "user"
-            SET send_msg_hour = '{msg_hour}'
-            WHERE user_id = {user_id}""")
+            update = """UPDATE "user"
+                     SET send_msg_hour = %s
+                     WHERE user_id = %s"""
+            data = (msg_hour, user_id)
+            cur.execute(update, data)
     except Exception as error:
         logger.error(f"ERROR: {error} | TYPE: {type(error)}")
         raise DBError()

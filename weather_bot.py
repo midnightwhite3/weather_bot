@@ -11,13 +11,14 @@ import re
 # TODO: create validators.py for user input validation
 # TODO: check if msg hours includes timezoning, maybe user must specify it?
 # TODO: no error message for user if daa isnt saved to DB
+# TODO: use bs4 to validate city on input
 
 logger.info("Bot is running..")
 
 
 def validate_sub_type(sub):
     try:
-        return re.search(r"today|now|tomorrow", sub).group()
+        return re.search(r"\btoday\b|\bnow\b|\btomorrow\b", sub).group()
     except AttributeError:  # throws attr error when no match found
         return False
 
@@ -26,7 +27,7 @@ def weather_msg_conditional(update, context, weather_func):
     """Function validates user input and returns the message."""
     if len(context.args) == 0:
         return update.message.reply_text("You need to give the city name.") # return to stop func right there, if not it continues and returns 2 error messages
-    elif len(context.args) > 1:       # check i user msg has more than 1 word
+    elif len(context.args) > 1:       # check if user msg has more than 1 word
         if not gw.has_number(context.args[-1]):    # verify that the last word is a post code or not
             city = " ".join(context.args)       # if its not post code, that means all words are a city name
             post_code = gw.find_postal_code(city)  # in that case we look for the post code
@@ -118,21 +119,23 @@ def subscribe_command(update, context):
     subbed = validate_sub_type(' '.join(context.args))      # if user didnt type sub type, returns False
     hour = hd.is_time(' '.join(context.args))
     msg = ""
-    if type(subbed) == bool:
+    if type(subbed) == bool:    # validate sub returns bool (FALSE) if sub type is not given
         update.message.reply_text(f"""You must specify subscription type.\nOptions are - tomorrow, today, now.\nExample:
         /sub new york today 08:00:00""")
         return
     sub = hd.sub_type[validate_sub_type(' '.join(context.args))]    # user typed sub type, use dict to convert it to numeric
-    if type(hour) == bool:
-        hour = '06:00:00'
-        msg += (f"""You didn't specify hour or gave wrong format so I set it to be 06:00:00.\nTo change that, use '/set_hour HH:MM:SS'.""")
-    if type((hour and subbed)) == str:
+    if type(hour) == str and type(subbed) == str:      # if it's string, hour and sub type is given
         city = " ".join(context.args[:-2])
-    else:
+    elif type(subbed) == str and len(context.args[:-1]) > 1:
         city = " ".join(context.args[:-1])
+    else:
+        city = context.args[0]
+    if type(hour) == bool:  # user didnt give the hour so we set the default
+        hour = '06:00:00'
+        msg += (f"""You didn't specify hour or gave wrong format so I set it to be 06:00:00.\nTo change that, use '/set_hour HH:MM:SS'.\n""")
     hd.subscribe(user_id, sub, hour, city)
     update.message.reply_text(msg + f"Subbed successfully. You will receive weather for {city.title()} at {hour} everyday.")
-    logger.info(f"SUB - user: {user_id} | subbed for: {sub}")
+    logger.info(f"SUB - user: {user_id} | subbed for: {sub} | city: {city.title()} | hour: {hour}")
 
 
 def set_msg_hour_command(update, context):
@@ -152,7 +155,9 @@ def set_msg_hour_command(update, context):
 
 def unsub_command(update, context):
     user_id = update.message.from_user.id
-    pass
+    hd.unsubscribe(user_id)
+    logger.info(f"User: {user_id} unsubbed.")
+    update.message.reply_text(f"Successfully unsubbed.")
 
 
 def error(update, context):
@@ -173,6 +178,7 @@ if __name__ == '__main__':
     dp.add_handler(CommandHandler('save_city', save_city_command))
     dp.add_handler(CommandHandler('sub', subscribe_command))
     dp.add_handler(CommandHandler('set_hour', set_msg_hour_command))
+    dp.add_handler(CommandHandler('unsub', unsub_command))
     dp.add_error_handler(error)
 
     updater.start_polling(2.0)
