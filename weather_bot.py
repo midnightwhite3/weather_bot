@@ -3,24 +3,14 @@ import get_weather as gw
 from settings import logger, telegram_key
 import handle_data as hd
 import traceback
-import re
+from validators import is_time, validate_sub_type, has_number, validate_city
 
 # TODO: enable daily message about the weather based on saved city?
-# TODO: write dict for error messages and fetch them from there?
 # TODO: validate all users input. One found - remove any special chars from city when calling weather functions
-# TODO: create validators.py for user input validation
 # TODO: check if msg hours includes timezoning, maybe user must specify it?
-# TODO: no error message for user if daa isnt saved to DB
 # TODO: use bs4 to validate city on input
 
 logger.info("Bot is running..")
-
-
-def validate_sub_type(sub):
-    try:
-        return re.search(r"\btoday\b|\bnow\b|\btomorrow\b", sub).group()
-    except AttributeError:  # throws attr error when no match found
-        return False
 
 
 def weather_msg_conditional(update, context, weather_func):
@@ -28,7 +18,7 @@ def weather_msg_conditional(update, context, weather_func):
     if len(context.args) == 0:
         return update.message.reply_text("You need to give the city name.") # return to stop func right there, if not it continues and returns 2 error messages
     elif len(context.args) > 1:       # check if user msg has more than 1 word
-        if not gw.has_number(context.args[-1]):    # verify that the last word is a post code or not
+        if not has_number(context.args[-1]):    # verify that the last word is a post code or not
             city = " ".join(context.args)       # if its not post code, that means all words are a city name
             post_code = gw.find_postal_code(city)  # in that case we look for the post code
         else:
@@ -37,6 +27,7 @@ def weather_msg_conditional(update, context, weather_func):
     else:                                           # if user msg has 1 word it means he gave just the city name
         city = context.args[0]
         post_code = gw.find_postal_code(city)      # so we look up the post code
+    validate_city(city)
     if len(post_code) > 20:     # if func doesnt find post_code it returns error_msg which is long
         update.message.reply_text(post_code)    # error_msg
         logger.info(f"Post code couldn't be found for {city.upper()}.")    # log for every lack of postcode
@@ -64,8 +55,9 @@ def save_city_command(update, context):
     """After simple validation stores city for user_id. If user does not exist, storing user first then city."""
     try:
         city = ' '.join(context.args)
-        if gw.has_number(city):
-            update.message.reply_text(f"{city.title()} is not a valid city name.")
+        validate_city(city)
+        # if has_number(city):
+        #     update.message.reply_text(f"{city.title()} is not a valid city name.")
         user_name = update.message.from_user.name
         user_id = update.message.from_user.id
         if not hd.user_exists(user_id):
@@ -117,7 +109,7 @@ def help_command(update, context):
 def subscribe_command(update, context):
     user_id = update.message.from_user.id
     subbed = validate_sub_type(' '.join(context.args))      # if user didnt type sub type, returns False
-    hour = hd.is_time(' '.join(context.args))
+    hour = is_time(' '.join(context.args))
     msg = ""
     if type(subbed) == bool:    # validate sub returns bool (FALSE) if sub type is not given
         update.message.reply_text(f"""You must specify subscription type.\nOptions are - tomorrow, today, now.\nExample:
@@ -133,6 +125,7 @@ def subscribe_command(update, context):
     if type(hour) == bool:  # user didnt give the hour so we set the default
         hour = '06:00:00'
         msg += (f"""You didn't specify hour or gave wrong format so I set it to be 06:00:00.\nTo change that, use '/set_hour HH:MM:SS'.\n""")
+    validate_city(city)     # think it looks clean enough, no if else
     hd.subscribe(user_id, sub, hour, city)
     update.message.reply_text(msg + f"Subbed successfully. You will receive weather for {city.title()} at {hour} everyday.")
     logger.info(f"SUB - user: {user_id} | subbed for: {sub} | city: {city.title()} | hour: {hour}")
@@ -140,7 +133,7 @@ def subscribe_command(update, context):
 
 def set_msg_hour_command(update, context):
     user_id = update.message.from_user.id
-    msg_hour = hd.is_time(' '.join(context.args))
+    msg_hour = is_time(' '.join(context.args))
     if not msg_hour:
         update.message.reply_text(f"""{msg_hour} is not valid. Make sure you use 24hr format. Example:\n06:00:00""")
         return

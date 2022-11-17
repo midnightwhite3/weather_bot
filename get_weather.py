@@ -4,6 +4,7 @@ from datetime import datetime
 from time import gmtime, strftime, time
 from settings import telegram_key, weather_key, logger
 import re
+from validators import validate_city
 
 # TODO: merge weather_now and weather_tomorrow functions?
 # TODO: divide find_postal_code func in two? each function for each site?
@@ -17,12 +18,9 @@ today = datetime.today().date()
 tomorrow = strftime("%Y-%m-%d", gmtime(time() + 86400))
 
 
-def has_number(string):
-    return bool(re.search(r"\d", string))
-
-
 def find_postal_code(city):
     """Makes post_code arg optional. Scrapes the web for it and returns."""
+    validate_city(city)
     not_found = f"""Sorry, we couldn't find post code for {city.title()}. Enter it manually.
                 Example - 'new york 10001'"""
     try:
@@ -64,7 +62,7 @@ def get_country(data):
         elif 'city' in data: msg = f"Country: {data['city']['country']}\n"
         return msg
     except Exception:
-        logger.exception("Exception occured.", exc_info=True)
+        logger.error("Exception occured.", exc_info=True)
         pass
 
 

@@ -32,12 +32,6 @@ class DBError(Exception):
         return self.message
 
 
-def is_time(time):
-    try:
-        return re.search(r"\b(2[0-3]|[01]?[0-9]):([0-5][0-9]):([0-5][0-9])\b", time).group()
-    except AttributeError:
-        return False
-
 # take a closer look to sql alchemy library, may be a better option.
 # sql alchemy --> django, pure python to make advanced DB operations.
 class DBConnection:
@@ -116,7 +110,9 @@ def is_location(user_id: int):
             query = """SELECT city FROM "user" WHERE user_id = %s"""
             data = (user_id,)
             cur.execute(query, data)
-            return bool(cur.fetchone())
+            if type(cur.fetchone()[0]) is not str: # fetchone returns a tuple
+                return False
+            return True
     except Exception as error:
         logger.error(f"ERROR: {error} | TYPE: {type(error)}")
         raise DBError()
@@ -183,10 +179,3 @@ def set_msg_hour(user_id: int, msg_hour):
     except Exception as error:
         logger.error(f"ERROR: {error} | TYPE: {type(error)}")
         raise DBError()
-
-
-# def make_query():
-#     cur.execute(
-#         """SELECT city FROM "user";"""
-#     )
-#     return cur.fetchall()
