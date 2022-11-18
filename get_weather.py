@@ -7,7 +7,7 @@ import re
 from validators import validate_city
 
 # TODO: merge weather_now and weather_tomorrow functions?
-# TODO: divide find_postal_code func in two? each function for each site?
+# TODO: divide find_postal_code func in two? each function for each site? a Class perhaps?
 # TODO: divide weather_message to more smaller functions?
 
 
@@ -82,6 +82,7 @@ def check_status(json_response):
         raise StatusError("Something is wrong on the server side. Try again later since I'm trying to fix this ASAP.")
     else: pass  # no errors, pass it
 
+
 def weather_message(data, timezone):
     """Converts json response to actual message, readable for the user."""
     try:
@@ -117,7 +118,6 @@ def weather_message(data, timezone):
         logger.exception("Unknown error.", exc_info=True)
         return "Something is wrong, try again later."
     
-
 
 def weather_today(city, post_code):
     """Open weather API call is for 5 days, function returns weather for the current day via 'weather_message'

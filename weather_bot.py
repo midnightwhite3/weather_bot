@@ -6,9 +6,9 @@ import traceback
 from validators import is_time, validate_sub_type, has_number, validate_city
 
 # TODO: enable daily message about the weather based on saved city?
-# TODO: validate all users input. One found - remove any special chars from city when calling weather functions
 # TODO: check if msg hours includes timezoning, maybe user must specify it?
-# TODO: use bs4 to validate city on input
+# TODO: look for city database online to perfectly validate city input.
+# ^^ or make own DB, write a script to upload city names from web to *csv file.
 
 logger.info("Bot is running..")
 
@@ -107,6 +107,7 @@ def help_command(update, context):
 
 
 def subscribe_command(update, context):
+    """Allows to subscribe for daily weather messages."""
     user_id = update.message.from_user.id
     subbed = validate_sub_type(' '.join(context.args))      # if user didnt type sub type, returns False
     hour = is_time(' '.join(context.args))
@@ -132,6 +133,7 @@ def subscribe_command(update, context):
 
 
 def set_msg_hour_command(update, context):
+    """Allows to change hour for weather messages."""
     user_id = update.message.from_user.id
     msg_hour = is_time(' '.join(context.args))
     if not msg_hour:
@@ -147,6 +149,7 @@ def set_msg_hour_command(update, context):
 
 
 def unsub_command(update, context):
+    """Allows to cances subscription for weather messages."""
     user_id = update.message.from_user.id
     hd.unsubscribe(user_id)
     logger.info(f"User: {user_id} unsubbed.")

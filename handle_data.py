@@ -1,12 +1,10 @@
 import psycopg2 as psc
 from settings import DB_NAME, DB_USER, DB_PSWRD, logger
 import traceback
-import re
 
 # TODO: functions there are not yet completed. Error handling, conditional statements, any other actions
 # to improve these functions
 # TODO: write specified exceptions for funcs
-# TODO: write try on db init to check if its connected if noit raise the error
 # TODO: improve DBError traceback
 # TODO: exception in DBError class to not duck type it in every function
 # TODO: validator if user is subscribed
