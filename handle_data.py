@@ -7,11 +7,17 @@ import traceback
 # TODO: write specified exceptions for funcs
 # TODO: improve DBError traceback
 # TODO: exception in DBError class to not duck type it in every function
-# TODO: validator if user is subscribed
+# TODO: delete seconds from send_msg_hour? dont allow user to type seconds, just set them to 0?
 
-# CHECK ERROR HANDLING ON DB OPERATIONS, SAVE CHANGE SUB DATA, TEST USER INPUTS, WRITE EXCEPTIONS.
-# MOVE ANY VALIDATE FUNC TO VALIDATORS.PY CHECK IF ANYTHING NEEDS TO VALIDE THE USER INPUT
+# use check_msg_hour* subbed users, their time, sub type, city and id
+# then async if sub command is called, call check_msg_hour* to get this new user,
+# or just append it to the list of subbed (not only if sub command is called but
+# when changes are made in db, such as - city, hour, sub type --> UPDATE INFO)
+# CREATE A LIST EVERYDAY AT MIDNIGHT SORTED BY HOUR, SCHEDULE A TASK FOR THOSE HOURS
+# WHEN A CHANGE IS MADE TO MSG HOUR COLUMN, UPDATE THE LIST
+
 # F STRINGS WITH SQL -> BIG NONO
+
 sub_type = {
     'unsubbed': 0,
     'now': 1,
@@ -174,6 +180,19 @@ def set_msg_hour(user_id: int, msg_hour):
                      WHERE user_id = %s"""
             data = (msg_hour, user_id)
             cur.execute(update, data)
+    except Exception as error:
+        logger.error(f"ERROR: {error} | TYPE: {type(error)}")
+        raise DBError()
+
+
+def check_msg_hour():
+    try:
+        with DBConnection() as cur:
+            query = """SELECT user_id, city, send_msg_hour, subbed_for
+                    FROM "user"
+                    WHERE subbed_for != 0"""
+            cur.execute(query)
+            return cur.fetchall()
     except Exception as error:
         logger.error(f"ERROR: {error} | TYPE: {type(error)}")
         raise DBError()

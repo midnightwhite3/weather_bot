@@ -6,7 +6,7 @@ import traceback
 from validators import is_time, validate_sub_type, has_number, validate_city
 
 # TODO: enable daily message about the weather based on saved city?
-# TODO: check if msg hours includes timezoning, maybe user must specify it?
+# TODO: check if msg hours includes timezoning, maybe user must specify it? look pytz
 # TODO: look for city database online to perfectly validate city input.
 # ^^ or make own DB, write a script to upload city names from web to *csv file.
 
