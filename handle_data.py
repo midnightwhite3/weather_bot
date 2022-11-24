@@ -192,7 +192,8 @@ def check_msg_hour():
                     FROM "user"
                     WHERE subbed_for != 0"""
             cur.execute(query)
-            return cur.fetchall()
+            a = cur.fetchall()
+            return a;
     except Exception as error:
         logger.error(f"ERROR: {error} | TYPE: {type(error)}")
         raise DBError()
