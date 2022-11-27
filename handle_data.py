@@ -185,15 +185,14 @@ def set_msg_hour(user_id: int, msg_hour):
         raise DBError()
 
 
-def check_msg_hour():
+def fetch_subs():
     try:
         with DBConnection() as cur:
             query = """SELECT user_id, city, send_msg_hour, subbed_for
                     FROM "user"
                     WHERE subbed_for != 0"""
             cur.execute(query)
-            a = cur.fetchall()
-            return a;
+            return  cur.fetchall()
     except Exception as error:
         logger.error(f"ERROR: {error} | TYPE: {type(error)}")
         raise DBError()
