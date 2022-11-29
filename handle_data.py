@@ -196,3 +196,11 @@ def fetch_subs():
     except Exception as error:
         logger.error(f"ERROR: {error} | TYPE: {type(error)}")
         raise DBError()
+
+
+def db_update_check():
+    pass
+
+set_msg_hour(121, "22:20:00")
+set_msg_hour(12, "22:23:00")
+set_msg_hour(90, "22:22:00")

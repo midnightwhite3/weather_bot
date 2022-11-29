@@ -141,7 +141,7 @@ def set_msg_hour_command(update, context):
         return
     try:
         hd.set_msg_hour(user_id, msg_hour)
-    except Exception:
+    except Exception as err:
         update.message.reply_text("DB error")
         return
     logger.info(f"{user_id} updated 'send_msg_hour' as {msg_hour}.")

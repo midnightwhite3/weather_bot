@@ -1,7 +1,12 @@
 import re
+from datetime import datetime
 
 # TODO: instead of return false, just raise the exception, less code, no IF ELSE needed in another functions. Up to refactoring.
 # TODO: create Validator class?
+
+current_time = datetime.now()
+now = f"{current_time.hour}:{current_time.minute}"
+
 
 def validate_sub_type(sub):
     """Validates subscription type input."""
@@ -30,3 +35,8 @@ def validate_city(city):
     if len(match) == 0:     # empty list if no match
         raise Exception(f"{city} is not valid.")
     return " ".join(match)
+
+
+def is_hour_greater(subscribers: list) -> list:
+    subs = [sub for sub in subscribers if sub[2] >= now]
+    return subs, now

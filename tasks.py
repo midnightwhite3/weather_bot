@@ -6,10 +6,20 @@ import schedule
 import signal
 import csv
 from settings import logger
+from operator import itemgetter
+from validators import is_hour_greater
 
 # use threading timer instead of schedule? make timer dynamic to execute on midnight
 # so every 24hr or when func started count time to midnight
-now = datetime.now()
+current_time = datetime.now()
+now = f"{current_time.hour}:{current_time.minute}" # returns 22:8 instead of 22:08
+
+
+def current_hr_m():
+    current_time = datetime.now()
+    now = f"{current_time.hour}:{current_time.minute}"
+    return now
+
 
 def write_subs():
     """Temporary to catch the return of scheduled Job. Looking for more
@@ -49,8 +59,38 @@ def get_subscribers():
         sleep(1)
 
 
-l = read_subs()
-print([sorted(s) for s in l]) # sort subs by hour integer, this doesnt work, changes order
+def create_sub_list():
+    pass
+
+
+def check_sub_hour():
+    subs = sorted(read_subs(), key=itemgetter(2))   # sorts list by hour variable, write func for this, possible collisions in the future
+    print(subs)
+    subs = is_hour_greater(subs)
+    print(subs)
+    while len(subs) > 0:
+        print(subs[0][2][:5], current_hr_m())
+        if subs[0][2][:5] == current_hr_m():
+            print('y')
+            del subs[0]
+        else:
+            pass
+        sleep(3)
+    print('Done')
+
+subs = sorted(read_subs(), key=itemgetter(2))
+print(is_hour_greater(subs))
+
+
+# musi sprawdzac czy dana godzina jest wczesniej niz aktualna, jesli tak, usunac element z listy
+# write_subs()
+# subs = sorted(read_subs(), key=itemgetter(2))
+# hour = subs[0][2][:5]
+# print(hour)
+
+# write_subs()
+# check_sub_hour()
+
 # if __name__ == "__main__":
 #     subs = Thread(target=get_subscribers)
 #     signal.signal(signal.SIGINT, signal.SIG_DFL) # allows ctrl + c exit
