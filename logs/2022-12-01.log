@@ -1,0 +1,253 @@
+2022-12-01 16:38:45,968 - INFO - Connected to database.
+2022-12-01 16:38:45,990 - INFO - Changes commited.
+2022-12-01 16:38:45,991 - INFO - Database connection closed.
+2022-12-01 16:38:46,040 - INFO - Connected to database.
+2022-12-01 16:38:46,043 - INFO - Changes commited.
+2022-12-01 16:38:46,043 - INFO - Database connection closed.
+2022-12-01 16:38:46,083 - INFO - Connected to database.
+2022-12-01 16:38:46,085 - INFO - Changes commited.
+2022-12-01 16:38:46,085 - INFO - Database connection closed.
+2022-12-01 16:38:46,100 - ERROR - Reading data error: [Errno 2] No such file or directory: 'subs.csv'
+<class 'FileNotFoundError'>
+2022-12-01 16:38:55,225 - INFO - Connected to database.
+2022-12-01 16:38:55,228 - INFO - Changes commited.
+2022-12-01 16:38:55,228 - INFO - Database connection closed.
+2022-12-01 16:38:55,268 - INFO - Connected to database.
+2022-12-01 16:38:55,269 - INFO - Changes commited.
+2022-12-01 16:38:55,269 - INFO - Database connection closed.
+2022-12-01 16:38:55,309 - INFO - Connected to database.
+2022-12-01 16:38:55,310 - INFO - Changes commited.
+2022-12-01 16:38:55,310 - INFO - Database connection closed.
+2022-12-01 16:39:05,742 - INFO - Connected to database.
+2022-12-01 16:39:05,744 - INFO - Changes commited.
+2022-12-01 16:39:05,744 - INFO - Database connection closed.
+2022-12-01 16:39:05,788 - INFO - Connected to database.
+2022-12-01 16:39:05,789 - INFO - Changes commited.
+2022-12-01 16:39:05,789 - INFO - Database connection closed.
+2022-12-01 16:39:05,830 - INFO - Connected to database.
+2022-12-01 16:39:05,831 - INFO - Changes commited.
+2022-12-01 16:39:05,832 - INFO - Database connection closed.
+2022-12-01 16:40:55,659 - INFO - Connected to database.
+2022-12-01 16:40:55,661 - INFO - Changes commited.
+2022-12-01 16:40:55,661 - INFO - Database connection closed.
+2022-12-01 16:40:55,702 - INFO - Connected to database.
+2022-12-01 16:40:55,703 - INFO - Changes commited.
+2022-12-01 16:40:55,704 - INFO - Database connection closed.
+2022-12-01 16:40:55,846 - INFO - Connected to database.
+2022-12-01 16:40:55,848 - INFO - Changes commited.
+2022-12-01 16:40:55,848 - INFO - Database connection closed.
+2022-12-01 16:40:55,897 - INFO - Connected to database.
+2022-12-01 16:40:55,901 - INFO - Changes commited.
+2022-12-01 16:40:55,901 - INFO - Database connection closed.
+2022-12-01 16:40:55,902 - INFO - Data saved to csv file. Regular task done.
+2022-12-01 16:40:55,902 - INFO - Data read successfully.
+2022-12-01 16:42:32,466 - INFO - Connected to database.
+2022-12-01 16:42:32,467 - INFO - Changes commited.
+2022-12-01 16:42:32,467 - INFO - Database connection closed.
+2022-12-01 16:42:32,508 - INFO - Connected to database.
+2022-12-01 16:42:32,509 - INFO - Changes commited.
+2022-12-01 16:42:32,509 - INFO - Database connection closed.
+2022-12-01 16:42:32,549 - INFO - Connected to database.
+2022-12-01 16:42:32,550 - INFO - Changes commited.
+2022-12-01 16:42:32,551 - INFO - Database connection closed.
+2022-12-01 16:42:32,602 - INFO - Connected to database.
+2022-12-01 16:42:32,604 - INFO - Changes commited.
+2022-12-01 16:42:32,604 - INFO - Database connection closed.
+2022-12-01 16:42:32,604 - INFO - Data saved to csv file. Regular task done.
+2022-12-01 16:42:32,604 - INFO - Data read successfully.
+2022-12-01 16:48:48,462 - INFO - Connected to database.
+2022-12-01 16:48:48,465 - INFO - Changes commited.
+2022-12-01 16:48:48,465 - INFO - Database connection closed.
+2022-12-01 16:48:48,619 - INFO - Connected to database.
+2022-12-01 16:48:48,620 - INFO - Changes commited.
+2022-12-01 16:48:48,620 - INFO - Database connection closed.
+2022-12-01 16:48:48,662 - INFO - Connected to database.
+2022-12-01 16:48:48,663 - INFO - Changes commited.
+2022-12-01 16:48:48,663 - INFO - Database connection closed.
+2022-12-01 16:54:35,445 - INFO - Connected to database.
+2022-12-01 16:54:35,447 - INFO - Changes commited.
+2022-12-01 16:54:35,447 - INFO - Database connection closed.
+2022-12-01 16:54:35,490 - INFO - Connected to database.
+2022-12-01 16:54:35,491 - INFO - Changes commited.
+2022-12-01 16:54:35,492 - INFO - Database connection closed.
+2022-12-01 16:54:35,533 - INFO - Connected to database.
+2022-12-01 16:54:35,534 - INFO - Changes commited.
+2022-12-01 16:54:35,535 - INFO - Database connection closed.
+2022-12-01 16:54:35,544 - INFO - Data read successfully.
+2022-12-01 16:55:22,866 - INFO - Connected to database.
+2022-12-01 16:55:22,868 - INFO - Changes commited.
+2022-12-01 16:55:22,868 - INFO - Database connection closed.
+2022-12-01 16:55:22,911 - INFO - Connected to database.
+2022-12-01 16:55:22,913 - INFO - Changes commited.
+2022-12-01 16:55:22,913 - INFO - Database connection closed.
+2022-12-01 16:55:22,957 - INFO - Connected to database.
+2022-12-01 16:55:22,958 - INFO - Changes commited.
+2022-12-01 16:55:22,958 - INFO - Database connection closed.
+2022-12-01 16:55:22,968 - INFO - Data read successfully.
+2022-12-01 16:56:30,477 - INFO - Connected to database.
+2022-12-01 16:56:30,480 - INFO - Changes commited.
+2022-12-01 16:56:30,480 - INFO - Database connection closed.
+2022-12-01 16:56:30,522 - INFO - Connected to database.
+2022-12-01 16:56:30,523 - INFO - Changes commited.
+2022-12-01 16:56:30,524 - INFO - Database connection closed.
+2022-12-01 16:56:30,568 - INFO - Connected to database.
+2022-12-01 16:56:30,569 - INFO - Changes commited.
+2022-12-01 16:56:30,569 - INFO - Database connection closed.
+2022-12-01 16:56:30,578 - INFO - Data read successfully.
+2022-12-01 16:57:05,560 - INFO - Connected to database.
+2022-12-01 16:57:05,563 - INFO - Changes commited.
+2022-12-01 16:57:05,563 - INFO - Database connection closed.
+2022-12-01 16:57:05,622 - INFO - Connected to database.
+2022-12-01 16:57:05,625 - INFO - Changes commited.
+2022-12-01 16:57:05,625 - INFO - Database connection closed.
+2022-12-01 16:57:05,672 - INFO - Connected to database.
+2022-12-01 16:57:05,674 - INFO - Changes commited.
+2022-12-01 16:57:05,674 - INFO - Database connection closed.
+2022-12-01 16:57:25,568 - INFO - Connected to database.
+2022-12-01 16:57:25,570 - INFO - Changes commited.
+2022-12-01 16:57:25,570 - INFO - Database connection closed.
+2022-12-01 16:57:25,613 - INFO - Connected to database.
+2022-12-01 16:57:25,615 - INFO - Changes commited.
+2022-12-01 16:57:25,615 - INFO - Database connection closed.
+2022-12-01 16:57:25,664 - INFO - Connected to database.
+2022-12-01 16:57:25,665 - INFO - Changes commited.
+2022-12-01 16:57:25,665 - INFO - Database connection closed.
+2022-12-01 16:57:28,484 - INFO - Connected to database.
+2022-12-01 16:57:28,488 - INFO - Changes commited.
+2022-12-01 16:57:28,488 - INFO - Database connection closed.
+2022-12-01 16:57:28,532 - INFO - Connected to database.
+2022-12-01 16:57:28,533 - INFO - Changes commited.
+2022-12-01 16:57:28,533 - INFO - Database connection closed.
+2022-12-01 16:57:28,576 - INFO - Connected to database.
+2022-12-01 16:57:28,577 - INFO - Changes commited.
+2022-12-01 16:57:28,577 - INFO - Database connection closed.
+2022-12-01 16:57:28,587 - INFO - Data read successfully.
+2022-12-01 16:57:46,771 - INFO - Connected to database.
+2022-12-01 16:57:46,774 - INFO - Changes commited.
+2022-12-01 16:57:46,774 - INFO - Database connection closed.
+2022-12-01 16:57:46,815 - INFO - Connected to database.
+2022-12-01 16:57:46,817 - INFO - Changes commited.
+2022-12-01 16:57:46,817 - INFO - Database connection closed.
+2022-12-01 16:57:46,859 - INFO - Connected to database.
+2022-12-01 16:57:46,861 - INFO - Changes commited.
+2022-12-01 16:57:46,861 - INFO - Database connection closed.
+2022-12-01 16:57:46,910 - INFO - Connected to database.
+2022-12-01 16:57:46,912 - INFO - Changes commited.
+2022-12-01 16:57:46,912 - INFO - Database connection closed.
+2022-12-01 16:57:46,913 - INFO - Data saved to csv file. Regular task done.
+2022-12-01 16:57:46,913 - INFO - Data read successfully.
+2022-12-01 16:59:21,264 - INFO - Connected to database.
+2022-12-01 16:59:21,266 - INFO - Changes commited.
+2022-12-01 16:59:21,266 - INFO - Database connection closed.
+2022-12-01 16:59:21,314 - INFO - Connected to database.
+2022-12-01 16:59:21,316 - INFO - Changes commited.
+2022-12-01 16:59:21,316 - INFO - Database connection closed.
+2022-12-01 16:59:21,470 - INFO - Connected to database.
+2022-12-01 16:59:21,472 - INFO - Changes commited.
+2022-12-01 16:59:21,472 - INFO - Database connection closed.
+2022-12-01 16:59:21,525 - INFO - Connected to database.
+2022-12-01 16:59:21,527 - INFO - Changes commited.
+2022-12-01 16:59:21,528 - INFO - Database connection closed.
+2022-12-01 16:59:21,528 - INFO - Data saved to csv file. Regular task done.
+2022-12-01 16:59:21,528 - INFO - Data read successfully.
+2022-12-01 17:00:31,566 - INFO - Connected to database.
+2022-12-01 17:00:31,568 - INFO - Changes commited.
+2022-12-01 17:00:31,569 - INFO - Database connection closed.
+2022-12-01 17:00:31,614 - INFO - Connected to database.
+2022-12-01 17:00:31,616 - INFO - Changes commited.
+2022-12-01 17:00:31,616 - INFO - Database connection closed.
+2022-12-01 17:00:31,661 - INFO - Connected to database.
+2022-12-01 17:00:31,662 - INFO - Changes commited.
+2022-12-01 17:00:31,662 - INFO - Database connection closed.
+2022-12-01 17:00:31,672 - INFO - Data read successfully.
+2022-12-01 17:00:56,296 - INFO - Connected to database.
+2022-12-01 17:00:56,298 - INFO - Changes commited.
+2022-12-01 17:00:56,298 - INFO - Database connection closed.
+2022-12-01 17:00:56,341 - INFO - Connected to database.
+2022-12-01 17:00:56,342 - INFO - Changes commited.
+2022-12-01 17:00:56,343 - INFO - Database connection closed.
+2022-12-01 17:00:56,388 - INFO - Connected to database.
+2022-12-01 17:00:56,389 - INFO - Changes commited.
+2022-12-01 17:00:56,390 - INFO - Database connection closed.
+2022-12-01 17:00:56,400 - INFO - Data read successfully.
+2022-12-01 17:01:02,197 - INFO - Connected to database.
+2022-12-01 17:01:02,199 - INFO - Changes commited.
+2022-12-01 17:01:02,199 - INFO - Database connection closed.
+2022-12-01 17:01:02,241 - INFO - Connected to database.
+2022-12-01 17:01:02,242 - INFO - Changes commited.
+2022-12-01 17:01:02,243 - INFO - Database connection closed.
+2022-12-01 17:01:02,291 - INFO - Connected to database.
+2022-12-01 17:01:02,293 - INFO - Changes commited.
+2022-12-01 17:01:02,293 - INFO - Database connection closed.
+2022-12-01 17:01:02,303 - INFO - Data read successfully.
+2022-12-01 17:01:44,299 - INFO - Connected to database.
+2022-12-01 17:01:44,301 - INFO - Changes commited.
+2022-12-01 17:01:44,302 - INFO - Database connection closed.
+2022-12-01 17:01:44,348 - INFO - Connected to database.
+2022-12-01 17:01:44,350 - INFO - Changes commited.
+2022-12-01 17:01:44,350 - INFO - Database connection closed.
+2022-12-01 17:01:44,395 - INFO - Connected to database.
+2022-12-01 17:01:44,397 - INFO - Changes commited.
+2022-12-01 17:01:44,397 - INFO - Database connection closed.
+2022-12-01 17:01:44,407 - INFO - Data read successfully.
+2022-12-01 17:02:13,102 - INFO - Connected to database.
+2022-12-01 17:02:13,104 - INFO - Changes commited.
+2022-12-01 17:02:13,104 - INFO - Database connection closed.
+2022-12-01 17:02:13,148 - INFO - Connected to database.
+2022-12-01 17:02:13,149 - INFO - Changes commited.
+2022-12-01 17:02:13,149 - INFO - Database connection closed.
+2022-12-01 17:02:13,190 - INFO - Connected to database.
+2022-12-01 17:02:13,192 - INFO - Changes commited.
+2022-12-01 17:02:13,192 - INFO - Database connection closed.
+2022-12-01 17:02:13,203 - INFO - Data read successfully.
+2022-12-01 19:53:39,727 - INFO - Connected to database.
+2022-12-01 19:53:39,730 - INFO - Changes commited.
+2022-12-01 19:53:39,730 - INFO - Database connection closed.
+2022-12-01 19:53:39,783 - INFO - Connected to database.
+2022-12-01 19:53:39,787 - INFO - Changes commited.
+2022-12-01 19:53:39,787 - INFO - Database connection closed.
+2022-12-01 19:53:39,939 - INFO - Connected to database.
+2022-12-01 19:53:39,941 - INFO - Changes commited.
+2022-12-01 19:53:39,941 - INFO - Database connection closed.
+2022-12-01 19:53:40,008 - INFO - Connected to database.
+2022-12-01 19:53:40,009 - INFO - Changes commited.
+2022-12-01 19:53:40,010 - INFO - Database connection closed.
+2022-12-01 19:53:40,010 - INFO - Data saved to csv file. Regular task done.
+2022-12-01 19:53:40,010 - INFO - Data read successfully.
+2022-12-01 19:54:06,577 - INFO - Connected to database.
+2022-12-01 19:54:06,580 - INFO - Changes commited.
+2022-12-01 19:54:06,580 - INFO - Database connection closed.
+2022-12-01 19:54:06,735 - INFO - Connected to database.
+2022-12-01 19:54:06,737 - INFO - Changes commited.
+2022-12-01 19:54:06,737 - INFO - Database connection closed.
+2022-12-01 19:54:06,890 - INFO - Connected to database.
+2022-12-01 19:54:06,892 - INFO - Changes commited.
+2022-12-01 19:54:06,892 - INFO - Database connection closed.
+2022-12-01 19:54:09,046 - INFO - Connected to database.
+2022-12-01 19:54:09,048 - INFO - Changes commited.
+2022-12-01 19:54:09,048 - INFO - Database connection closed.
+2022-12-01 19:54:09,096 - INFO - Connected to database.
+2022-12-01 19:54:09,097 - INFO - Changes commited.
+2022-12-01 19:54:09,098 - INFO - Database connection closed.
+2022-12-01 19:54:09,141 - INFO - Connected to database.
+2022-12-01 19:54:09,142 - INFO - Changes commited.
+2022-12-01 19:54:09,143 - INFO - Database connection closed.
+2022-12-01 19:54:09,198 - INFO - Connected to database.
+2022-12-01 19:54:09,200 - INFO - Changes commited.
+2022-12-01 19:54:09,200 - INFO - Database connection closed.
+2022-12-01 19:54:09,200 - INFO - Data saved to csv file. Regular task done.
+2022-12-01 19:54:09,201 - INFO - Data read successfully.
+2022-12-01 19:54:33,348 - INFO - Connected to database.
+2022-12-01 19:54:33,350 - INFO - Changes commited.
+2022-12-01 19:54:33,350 - INFO - Database connection closed.
+2022-12-01 19:54:33,392 - INFO - Connected to database.
+2022-12-01 19:54:33,393 - INFO - Changes commited.
+2022-12-01 19:54:33,394 - INFO - Database connection closed.
+2022-12-01 19:54:33,435 - INFO - Connected to database.
+2022-12-01 19:54:33,436 - INFO - Changes commited.
+2022-12-01 19:54:33,436 - INFO - Database connection closed.
+2022-12-01 19:54:33,488 - INFO - Connected to database.
+2022-12-01 19:54:33,490 - INFO - Changes commited.
+2022-12-01 19:54:33,490 - INFO - Database connection closed.
+2022-12-01 19:54:33,490 - INFO - Data saved to csv file. Regular task done.
+2022-12-01 19:54:33,491 - INFO - Data read successfully.

@@ -201,6 +201,6 @@ def fetch_subs():
 def db_update_check():
     pass
 
-set_msg_hour(121, "22:20:00")
-set_msg_hour(12, "22:23:00")
-set_msg_hour(90, "22:22:00")
+set_msg_hour(121, "19:54:00")
+set_msg_hour(12, "19:55:00")
+set_msg_hour(90, "19:55:00")

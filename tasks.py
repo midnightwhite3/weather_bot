@@ -11,14 +11,14 @@ from validators import is_hour_greater
 
 # use threading timer instead of schedule? make timer dynamic to execute on midnight
 # so every 24hr or when func started count time to midnight
-current_time = datetime.now()
-now = f"{current_time.hour}:{current_time.minute}" # returns 22:8 instead of 22:08
+# TODO: write an event class, for db changes, subs.csv changes, and any changes overall.
+# TODO: instead of scheduler, create an event NEW_DAY, its gonna trigger daily routine
+# like write subs -> create_sub_list -> 
 
+now = datetime.now().strftime("%H:%M") # returns 22:8 instead of 22:08
 
 def current_hr_m():
-    current_time = datetime.now()
-    now = f"{current_time.hour}:{current_time.minute}"
-    return now
+    return datetime.now().strftime("%H:%M")
 
 
 def write_subs():
@@ -52,46 +52,37 @@ def read_subs() -> list:
 
 
 def get_subscribers():
+    """Scheduled job. Fetches subs from DB and saves them in a CSV file, at given time everyday."""
     schedule.every().day.at("16:54:15").do(write_subs)
     while True:
         schedule.run_pending()
-
         sleep(1)
 
 
 def create_sub_list():
-    pass
+    """Reads subs from CSV, sorts them by message_hour. Removes sub from list - now <= message_hour."""
+    subs = sorted(read_subs(), key=itemgetter(2))   # sorts list by hour variable, write func for this, possible collisions in the future
+    subs = is_hour_greater(subs)
+    return subs
 
 
 def check_sub_hour():
     subs = sorted(read_subs(), key=itemgetter(2))   # sorts list by hour variable, write func for this, possible collisions in the future
-    print(subs)
     subs = is_hour_greater(subs)
-    print(subs)
     while len(subs) > 0:
-        print(subs[0][2][:5], current_hr_m())
-        if subs[0][2][:5] == current_hr_m():
+        if subs[0][2][:5] == current_hr_m():    # 0-first user, 2-hour L element, :5-HH:MM format
             print('y')
             del subs[0]
         else:
             pass
-        sleep(3)
+        sleep(3) # potential problem - if subs number on given minute > 60s/sleep - the overall
+                 # sleep time will exceed 1min. Look for solution.
     print('Done')
 
-subs = sorted(read_subs(), key=itemgetter(2))
-print(is_hour_greater(subs))
 
-
-# musi sprawdzac czy dana godzina jest wczesniej niz aktualna, jesli tak, usunac element z listy
-# write_subs()
-# subs = sorted(read_subs(), key=itemgetter(2))
-# hour = subs[0][2][:5]
-# print(hour)
-
-# write_subs()
-# check_sub_hour()
-
-# if __name__ == "__main__":
-#     subs = Thread(target=get_subscribers)
-#     signal.signal(signal.SIGINT, signal.SIG_DFL) # allows ctrl + c exit
-#     subs.start()
+if __name__ == "__main__":
+    DB_subs_to_csv = Thread(target=get_subscribers)
+    sub_msg_send = Thread(target=check_sub_hour)
+    signal.signal(signal.SIGINT, signal.SIG_DFL) # allows ctrl + c exit
+    DB_subs_to_csv.start()
+    sub_msg_send.start()

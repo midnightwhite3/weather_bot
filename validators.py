@@ -39,4 +39,4 @@ def validate_city(city):
 
 def is_hour_greater(subscribers: list) -> list:
     subs = [sub for sub in subscribers if sub[2] >= now]
-    return subs, now
+    return subs
