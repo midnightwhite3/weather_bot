@@ -1,13 +1,15 @@
 from threading import Thread, Event
 from time import time, strftime, localtime, sleep
 from datetime import datetime
-from handle_data import fetch_subs
+# from handle_data import fetch_subs
 import schedule
-import signal
 import csv
 from settings import logger
 from operator import itemgetter
 from validators import is_hour_greater
+
+# subprocess - lib
+
 
 # use threading timer instead of schedule? make timer dynamic to execute on midnight
 # so every 24hr or when func started count time to midnight
@@ -15,13 +17,14 @@ from validators import is_hour_greater
 # TODO: instead of scheduler, create an event NEW_DAY, its gonna trigger daily routine
 # like write subs -> create_sub_list -> 
 
-now = datetime.now().strftime("%H:%M") # returns 22:8 instead of 22:08
+now = datetime.now().strftime("%H:%M")
 
 def current_hr_m():
     return datetime.now().strftime("%H:%M")
 
 
 def write_subs():
+    from handle_data import fetch_subs
     """Temporary to catch the return of scheduled Job. Looking for more
         sufficient method."""
     try:
@@ -51,9 +54,9 @@ def read_subs() -> list:
         logger.error(f"Reading data error: {err}\n{type(err)}")
 
 
-def get_subscribers():
+def get_subscribers():  # function only for schedule purposes - bad? Just put write_subs in main?
     """Scheduled job. Fetches subs from DB and saves them in a CSV file, at given time everyday."""
-    schedule.every().day.at("16:54:15").do(write_subs)
+    schedule.every().day.at("12:39:00").do(write_subs)
     while True:
         schedule.run_pending()
         sleep(1)
@@ -76,13 +79,20 @@ def check_sub_hour():
         else:
             pass
         sleep(3) # potential problem - if subs number on given minute > 60s/sleep - the overall
-                 # sleep time will exceed 1min. Look for solution.
+                 # sleep time will exceed 1min. Look for solution. #up1 - write function for this part and use threading?
     print('Done')
 
 
-if __name__ == "__main__":
-    DB_subs_to_csv = Thread(target=get_subscribers)
-    sub_msg_send = Thread(target=check_sub_hour)
-    signal.signal(signal.SIGINT, signal.SIG_DFL) # allows ctrl + c exit
-    DB_subs_to_csv.start()
-    sub_msg_send.start()
+# def event_check():
+#     if db_change_event.is_set():
+#         print('yes')
+
+
+# if __name__ == "__main__":
+#     db_change_event = Event()
+#     DB_subs_to_csv = Thread(target=get_subscribers)
+#     sub_msg_send = Thread(target=check_sub_hour)
+#     signal.signal(signal.SIGINT, signal.SIG_DFL) # allows ctrl + c exit
+#     DB_subs_to_csv.start()
+#     sub_msg_send.start()
+#     db_change_event.wait()

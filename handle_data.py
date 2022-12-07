@@ -2,19 +2,17 @@ import psycopg2 as psc
 from settings import DB_NAME, DB_USER, DB_PSWRD, logger
 import traceback
 
+# asyncpg
+
+# IMPORTANT TODO: Make db connection on program run, not every time when DB operation
+# is made - DB_func -> connect_to_DB -> make_changes -> close_connection  /  verify if im right.
+
 # TODO: functions there are not yet completed. Error handling, conditional statements, any other actions
 # to improve these functions
 # TODO: write specified exceptions for funcs
 # TODO: improve DBError traceback
 # TODO: exception in DBError class to not duck type it in every function
 # TODO: delete seconds from send_msg_hour? dont allow user to type seconds, just set them to 0?
-
-# use check_msg_hour* subbed users, their time, sub type, city and id
-# then async if sub command is called, call check_msg_hour* to get this new user,
-# or just append it to the list of subbed (not only if sub command is called but
-# when changes are made in db, such as - city, hour, sub type --> UPDATE INFO)
-# CREATE A LIST EVERYDAY AT MIDNIGHT SORTED BY HOUR, SCHEDULE A TASK FOR THOSE HOURS
-# WHEN A CHANGE IS MADE TO MSG HOUR COLUMN, UPDATE THE LIST
 
 # F STRINGS WITH SQL -> BIG NONO
 
@@ -30,7 +28,6 @@ class DBError(Exception):
     def __init__(self, message="I have data base related problem, fixing this ASAP.", *args):
         self.message = message
         super().__init__(self.message)
-
 
     def __str__(self):
         return self.message
@@ -51,11 +48,9 @@ class DBConnection:
             logger.error(f"Connection error occured, traceback: {err}\n{type(err)}")
             raise DBError()
     
-
     def __enter__(self):
         """Everything in 'WITH'."""
         return self.cur
-
 
     def __exit__(self, exc_type, exc_value, exc_tb):
         """Commits changes, closes the DB connection, manages exceptions."""
@@ -198,9 +193,9 @@ def fetch_subs():
         raise DBError()
 
 
-def db_update_check():
-    pass
+# def db_update_check():
+#     conn = psc.connect(database=DB_NAME, user=DB_USER, password=DB_PSWRD)
+#     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
 
-set_msg_hour(121, "19:54:00")
-set_msg_hour(12, "19:55:00")
-set_msg_hour(90, "19:55:00")
+#     cur = conn.cursor()
+#     pass

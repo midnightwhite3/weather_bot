@@ -4,6 +4,11 @@ from settings import logger, telegram_key
 import handle_data as hd
 import traceback
 from validators import is_time, validate_sub_type, has_number, validate_city
+# from tasks import db_change_event
+from threading import Event, Thread
+import signal
+from tasks import get_subscribers, check_sub_hour
+
 
 # TODO: enable daily message about the weather based on saved city?
 # TODO: check if msg hours includes timezoning, maybe user must specify it? look pytz
@@ -63,6 +68,7 @@ def save_city_command(update, context):
         if not hd.user_exists(user_id):
             hd.store_user(user_id, user_name)
         hd.store_location(user_id, city)
+        db_change_event.set()
         update.message.reply_text(f"{city.title()} has been saved successfully!")
         logger.info(f"{city.title()} for user {user_id} has been updated.")
     except:
@@ -128,6 +134,7 @@ def subscribe_command(update, context):
         msg += (f"""You didn't specify hour or gave wrong format so I set it to be 06:00:00.\nTo change that, use '/set_hour HH:MM:SS'.\n""")
     validate_city(city)     # think it looks clean enough, no if else
     hd.subscribe(user_id, sub, hour, city)
+    db_change_event.set()
     update.message.reply_text(msg + f"Subbed successfully. You will receive weather for {city.title()} at {hour} everyday.")
     logger.info(f"SUB - user: {user_id} | subbed for: {sub} | city: {city.title()} | hour: {hour}")
 
@@ -144,6 +151,7 @@ def set_msg_hour_command(update, context):
     except Exception as err:
         update.message.reply_text("DB error")
         return
+    db_change_event.set()
     logger.info(f"{user_id} updated 'send_msg_hour' as {msg_hour}.")
     update.message.reply_text(f"Messaging hour set successfully!")  # search DB to inform user if he is subbed or not)
 
@@ -152,6 +160,7 @@ def unsub_command(update, context):
     """Allows to cances subscription for weather messages."""
     user_id = update.message.from_user.id
     hd.unsubscribe(user_id)
+    db_change_event.set()
     logger.info(f"User: {user_id} unsubbed.")
     update.message.reply_text(f"Successfully unsubbed.")
 
@@ -163,9 +172,18 @@ def error(update, context):
     update.message.reply_text(f"Unexpected error occured. Try again later.")
 
 
+def db_check():
+    """Helper function, testing."""
+    while True:
+        db_change_event.wait()
+        print('event set')
+        db_change_event.clear()
+
+
 if __name__ == '__main__':
     updater = Updater(telegram_key, use_context=True)
     dp = updater.dispatcher
+    db_change_event = Event()
 
     dp.add_handler(CommandHandler('today', today_weather_command))
     dp.add_handler(CommandHandler('now', now_weather_command))
@@ -176,6 +194,16 @@ if __name__ == '__main__':
     dp.add_handler(CommandHandler('set_hour', set_msg_hour_command))
     dp.add_handler(CommandHandler('unsub', unsub_command))
     dp.add_error_handler(error)
+
+
+    DB_subs_to_csv = Thread(target=get_subscribers)
+    # sub_msg_send = Thread(target=check_sub_hour)
+    check = Thread(target=db_check)
+    signal.signal(signal.SIGINT, signal.SIG_DFL) # allows ctrl + c exit
+    DB_subs_to_csv.start()
+    # sub_msg_send.start()
+    check.start()
+    
 
     updater.start_polling(2.0)
     updater.idle()
