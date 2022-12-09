@@ -9,7 +9,7 @@ from operator import itemgetter
 from validators import is_hour_greater
 
 # subprocess - lib
-
+# schedule in a for loop using Queue? for sub msg hour func
 
 # use threading timer instead of schedule? make timer dynamic to execute on midnight
 # so every 24hr or when func started count time to midnight
@@ -19,7 +19,7 @@ from validators import is_hour_greater
 
 now = datetime.now().strftime("%H:%M")
 
-def current_hr_m():
+def current_hr_m() -> str:
     return datetime.now().strftime("%H:%M")
 
 
@@ -62,30 +62,33 @@ def get_subscribers():  # function only for schedule purposes - bad? Just put wr
         sleep(1)
 
 
-def create_sub_list():
+def sort_sub_list() -> list:
     """Reads subs from CSV, sorts them by message_hour. Removes sub from list - now <= message_hour."""
     subs = sorted(read_subs(), key=itemgetter(2))   # sorts list by hour variable, write func for this, possible collisions in the future
     subs = is_hour_greater(subs)
     return subs
 
 
-def check_sub_hour():
-    subs = sorted(read_subs(), key=itemgetter(2))   # sorts list by hour variable, write func for this, possible collisions in the future
-    subs = is_hour_greater(subs)
-    while len(subs) > 0:
-        if subs[0][2][:5] == current_hr_m():    # 0-first user, 2-hour L element, :5-HH:MM format
-            print('y')
-            del subs[0]
-        else:
-            pass
-        sleep(3) # potential problem - if subs number on given minute > 60s/sleep - the overall
-                 # sleep time will exceed 1min. Look for solution. #up1 - write function for this part and use threading?
-    print('Done')
+def send_telegram_msg():
+    print('msg sent.')
 
 
-# def event_check():
-#     if db_change_event.is_set():
-#         print('yes')
+def check_sub_hour(event):
+    subs = sort_sub_list()
+    while True:
+        if event.is_set():
+            pass # no time, get back to it
+        if len(subs) > 0:
+            print('subs check')
+            if subs[0][2][:5] == current_hr_m():    # 0-first user, 2-hour L element, :5-HH:MM format
+                send_telegram_msg()
+                del subs[0]
+            else:
+                print('waiting')
+                pass
+                sleep(3) # potential problem - if subs number on given minute > 60s/sleep - the overall
+                    # sleep time will exceed 1min. Look for solution. #up1 - write function for this part and use threading? #up2 - use QUEUE
+        print('Done')
 
 
 # if __name__ == "__main__":

@@ -7,7 +7,7 @@ from validators import is_time, validate_sub_type, has_number, validate_city
 # from tasks import db_change_event
 from threading import Event, Thread
 import signal
-from tasks import get_subscribers, check_sub_hour
+from tasks import get_subscribers, check_sub_hour, write_subs
 
 
 # TODO: enable daily message about the weather based on saved city?
@@ -176,8 +176,10 @@ def db_check():
     """Helper function, testing."""
     while True:
         db_change_event.wait()
+        write_subs()
         print('event set')
         db_change_event.clear()
+        print('event cleared')
 
 
 if __name__ == '__main__':
@@ -197,11 +199,11 @@ if __name__ == '__main__':
 
 
     DB_subs_to_csv = Thread(target=get_subscribers)
-    # sub_msg_send = Thread(target=check_sub_hour)
+    sub_msg_send = Thread(target=check_sub_hour)
     check = Thread(target=db_check)
     signal.signal(signal.SIGINT, signal.SIG_DFL) # allows ctrl + c exit
     DB_subs_to_csv.start()
-    # sub_msg_send.start()
+    sub_msg_send.start()
     check.start()
     
 
