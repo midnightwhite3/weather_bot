@@ -16,6 +16,7 @@ from validators import is_hour_greater
 # TODO: write an event class, for db changes, subs.csv changes, and any changes overall.
 # TODO: instead of scheduler, create an event NEW_DAY, its gonna trigger daily routine
 # like write subs -> create_sub_list -> 
+# TODO: write task to delete old log files
 
 now = datetime.now().strftime("%H:%M")
 
@@ -29,12 +30,13 @@ def write_subs():
         sufficient method."""
     try:
         with open("subs.csv", 'w', newline="") as f:
+            logger.info(f"Opening file: {f.name}")
             csv_writer = csv.writer(f)
             csv_writer.writerow(['id', 'city', 'hour', 'subbed_for'])
             subs = fetch_subs()
             for sub in subs:
                 csv_writer.writerow(sub)
-        logger.info(f"Data saved to csv file. Regular task done.")
+        logger.info(f"Data saved to {f.name} successfully. Closing.")
     except Exception as err:
         logger.error(f"Writing data error: {err}\n{type(err)}")
 
@@ -44,11 +46,12 @@ def read_subs() -> list:
     subbed_users = []
     try:
         with open("subs.csv", "r") as f:
+            logger.info(f"Opening file: {f.name}")
             csv_reader = csv.reader(f, delimiter=',')
             next(csv_reader)    # skip header
             for row in csv_reader:
                 subbed_users.append(row)
-            logger.info("Data read successfully.")
+            logger.info(f"Data from {f.name} read successfully. Closing.")
             return subbed_users
     except Exception as err:
         logger.error(f"Reading data error: {err}\n{type(err)}")
@@ -64,38 +67,30 @@ def get_subscribers():  # function only for schedule purposes - bad? Just put wr
 
 def sort_sub_list() -> list:
     """Reads subs from CSV, sorts them by message_hour. Removes sub from list - now <= message_hour."""
-    subs = sorted(read_subs(), key=itemgetter(2))   # sorts list by hour variable, write func for this, possible collisions in the future
+    subs = sorted(read_subs(), key=itemgetter(2))
     subs = is_hour_greater(subs)
     return subs
 
 
-def send_telegram_msg():
+def send_telegram_msg(): # get the id of user and send the msg
     print('msg sent.')
 
 
 def check_sub_hour(event):
     subs = sort_sub_list()
     while True:
-        if event.is_set():
-            pass # no time, get back to it
-        if len(subs) > 0:
-            print('subs check')
+        try:
+            if event.is_set():
+                logger.info('New sub, updating list...')
+                subs = sort_sub_list()
+                event.clear()
+                logger.info('Subs message schedule list updated.')
             if subs[0][2][:5] == current_hr_m():    # 0-first user, 2-hour L element, :5-HH:MM format
                 send_telegram_msg()
                 del subs[0]
             else:
-                print('waiting')
-                pass
                 sleep(3) # potential problem - if subs number on given minute > 60s/sleep - the overall
                     # sleep time will exceed 1min. Look for solution. #up1 - write function for this part and use threading? #up2 - use QUEUE
-        print('Done')
-
-
-# if __name__ == "__main__":
-#     db_change_event = Event()
-#     DB_subs_to_csv = Thread(target=get_subscribers)
-#     sub_msg_send = Thread(target=check_sub_hour)
-#     signal.signal(signal.SIGINT, signal.SIG_DFL) # allows ctrl + c exit
-#     DB_subs_to_csv.start()
-#     sub_msg_send.start()
-#     db_change_event.wait()
+        except IndexError:
+            logger.info('No subs left for today. Going to sleep.')
+            event.wait()

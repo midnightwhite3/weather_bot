@@ -10,10 +10,10 @@ import signal
 from tasks import get_subscribers, check_sub_hour, write_subs
 
 
-# TODO: enable daily message about the weather based on saved city?
 # TODO: check if msg hours includes timezoning, maybe user must specify it? look pytz
 # TODO: look for city database online to perfectly validate city input.
 # ^^ or make own DB, write a script to upload city names from web to *csv file.
+# TODO: write custom logger level info
 
 logger.info("Bot is running..")
 
@@ -176,16 +176,19 @@ def db_check():
     """Helper function, testing."""
     while True:
         db_change_event.wait()
+        logger.info('Database data has changed. Starting protocol...')
         write_subs()
-        print('event set')
         db_change_event.clear()
-        print('event cleared')
+        logger.info('Exiting protocol.')
+        test_ev.set()
 
 
 if __name__ == '__main__':
+    write_subs()
     updater = Updater(telegram_key, use_context=True)
     dp = updater.dispatcher
     db_change_event = Event()
+    test_ev = Event()   # change event name to more accurate.
 
     dp.add_handler(CommandHandler('today', today_weather_command))
     dp.add_handler(CommandHandler('now', now_weather_command))
@@ -199,7 +202,7 @@ if __name__ == '__main__':
 
 
     DB_subs_to_csv = Thread(target=get_subscribers)
-    sub_msg_send = Thread(target=check_sub_hour)
+    sub_msg_send = Thread(target=check_sub_hour, args=(test_ev,))
     check = Thread(target=db_check)
     signal.signal(signal.SIGINT, signal.SIG_DFL) # allows ctrl + c exit
     DB_subs_to_csv.start()
