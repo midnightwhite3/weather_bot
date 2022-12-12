@@ -14,7 +14,8 @@ import traceback
 # TODO: exception in DBError class to not duck type it in every function
 # TODO: delete seconds from send_msg_hour? dont allow user to type seconds, just set them to 0?
 
-# F STRINGS WITH SQL -> BIG NONO
+### IMPORTANT ### 
+"""F STRINGS WITH SQL ---> BIG NONO"""
 
 sub_type = {
     'unsubbed': 0,
@@ -191,11 +192,3 @@ def fetch_subs():
     except Exception as error:
         logger.error(f"ERROR: {error} | TYPE: {type(error)}")
         raise DBError()
-
-
-# def db_update_check():
-#     conn = psc.connect(database=DB_NAME, user=DB_USER, password=DB_PSWRD)
-#     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-
-#     cur = conn.cursor()
-#     pass

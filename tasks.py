@@ -1,7 +1,6 @@
-from threading import Thread, Event
-from time import time, strftime, localtime, sleep
+from time import sleep
 from datetime import datetime
-# from handle_data import fetch_subs
+from handle_data import sub_type
 import schedule
 import csv
 from settings import logger
@@ -18,10 +17,14 @@ from validators import is_hour_greater
 # like write subs -> create_sub_list -> 
 # TODO: write task to delete old log files
 
-now = datetime.now().strftime("%H:%M")
 
 def current_hr_m() -> str:
     return datetime.now().strftime("%H:%M")
+
+
+def get_sub_type(sub, f1, f2, f3):
+    func = [f1, f2, f3][sub-1]
+    return func
 
 
 def write_subs():
@@ -72,25 +75,31 @@ def sort_sub_list() -> list:
     return subs
 
 
-def send_telegram_msg(): # get the id of user and send the msg
+def send_weather_msg(user_id, update): # get the id of user and send the msg
+    """Send msg to the user."""
+    get_sub_type()
+    update.message.reply_text(f"") # stopped here, get back to it
     print('msg sent.')
 
 
-def check_sub_hour(event):
-    subs = sort_sub_list()
+def check_sub_hour(update_subs):
+    """Creates a list of subscribers (tuples). Checks if the hour matches the sub_hour (yet to be improved, not efficient enough?),
+    sends weather_msg. Goes idle if no subscribers left for the day."""
+    subs = sort_sub_list() # new day event needs to be created here.
     while True:
         try:
-            if event.is_set():
+            if update_subs.is_set():
                 logger.info('New sub, updating list...')
                 subs = sort_sub_list()
-                event.clear()
+                update_subs.clear()
                 logger.info('Subs message schedule list updated.')
             if subs[0][2][:5] == current_hr_m():    # 0-first user, 2-hour L element, :5-HH:MM format
-                send_telegram_msg()
+                user_id = subs[0][0]
+                send_weather_msg(user_id)
                 del subs[0]
             else:
                 sleep(3) # potential problem - if subs number on given minute > 60s/sleep - the overall
                     # sleep time will exceed 1min. Look for solution. #up1 - write function for this part and use threading? #up2 - use QUEUE
         except IndexError:
             logger.info('No subs left for today. Going to sleep.')
-            event.wait()
+            update_subs.wait()

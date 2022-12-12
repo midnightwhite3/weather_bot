@@ -173,14 +173,14 @@ def error(update, context):
 
 
 def db_check():
-    """Helper function, testing."""
+    """Func waits for a call from DB using commands. If DB operations, related to subscriptions are made, call an event."""
     while True:
         db_change_event.wait()
         logger.info('Database data has changed. Starting protocol...')
         write_subs()
         db_change_event.clear()
         logger.info('Exiting protocol.')
-        test_ev.set()
+        update_subs.set()
 
 
 if __name__ == '__main__':
@@ -188,7 +188,7 @@ if __name__ == '__main__':
     updater = Updater(telegram_key, use_context=True)
     dp = updater.dispatcher
     db_change_event = Event()
-    test_ev = Event()   # change event name to more accurate.
+    update_subs = Event()
 
     dp.add_handler(CommandHandler('today', today_weather_command))
     dp.add_handler(CommandHandler('now', now_weather_command))
@@ -202,7 +202,7 @@ if __name__ == '__main__':
 
 
     DB_subs_to_csv = Thread(target=get_subscribers)
-    sub_msg_send = Thread(target=check_sub_hour, args=(test_ev,))
+    sub_msg_send = Thread(target=check_sub_hour, args=(update_subs,))
     check = Thread(target=db_check)
     signal.signal(signal.SIGINT, signal.SIG_DFL) # allows ctrl + c exit
     DB_subs_to_csv.start()
