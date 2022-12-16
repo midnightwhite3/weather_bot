@@ -1,4 +1,5 @@
-from telegram.ext import *  # not a good habit to import all. Func names can overrirde themselves
+from telegram.ext import *  # not a good habit to import all. Func names can override themselves
+from telegram.bot import Bot
 import get_weather as gw
 from settings import logger, telegram_key
 import handle_data as hd
@@ -37,7 +38,7 @@ def weather_msg_conditional(update, context, weather_func):
         update.message.reply_text(post_code)    # error_msg
         logger.info(f"Post code couldn't be found for {city.upper()}.")    # log for every lack of postcode
     else:                       # found post code, success
-        update.message.reply_text(f"{city.title()} {post_code} | {weather_func(city, post_code)}")
+        update.message.reply_text(f"{city.title()} {post_code} | {weather_func(city, post_code)}") # <-- city and post code, maybe add it to gw.weather_message
         logger.info(f"user_id: {update.message.from_user.id} | msg: {city} {post_code}")      # log every time user eneters a msg with success
 
 
@@ -184,8 +185,9 @@ def db_check():
 
 
 if __name__ == '__main__':
-    write_subs()
+    write_subs()    # create sub file everytime program starts.
     updater = Updater(telegram_key, use_context=True)
+    bot = Bot(token=telegram_key)
     dp = updater.dispatcher
     db_change_event = Event()
     update_subs = Event()
@@ -202,7 +204,7 @@ if __name__ == '__main__':
 
 
     DB_subs_to_csv = Thread(target=get_subscribers)
-    sub_msg_send = Thread(target=check_sub_hour, args=(update_subs,))
+    sub_msg_send = Thread(target=check_sub_hour, args=(update_subs, bot))
     check = Thread(target=db_check)
     signal.signal(signal.SIGINT, signal.SIG_DFL) # allows ctrl + c exit
     DB_subs_to_csv.start()

@@ -6,6 +6,10 @@ import csv
 from settings import logger
 from operator import itemgetter
 from validators import is_hour_greater
+import get_weather as gw
+
+"""According to python-telegram-bot docs threading may couse problems and it is better to use asyncio
+library."""
 
 # subprocess - lib
 # schedule in a for loop using Queue? for sub msg hour func
@@ -16,15 +20,16 @@ from validators import is_hour_greater
 # TODO: instead of scheduler, create an event NEW_DAY, its gonna trigger daily routine
 # like write subs -> create_sub_list -> 
 # TODO: write task to delete old log files
+# TODO: allow to save postal code along with city name, get post code from database, less problematic and faster?
+# TODO: save chat id to send messages. Check if delete chat and creating new changes its id
 
 
 def current_hr_m() -> str:
     return datetime.now().strftime("%H:%M")
 
 
-def get_sub_type(sub, f1, f2, f3):
-    func = [f1, f2, f3][sub-1]
-    return func
+def new_day():
+    pass
 
 
 def write_subs():
@@ -60,7 +65,7 @@ def read_subs() -> list:
         logger.error(f"Reading data error: {err}\n{type(err)}")
 
 
-def get_subscribers():  # function only for schedule purposes - bad? Just put write_subs in main?
+def get_subscribers():  # maybe create new_day event instead of schedule?
     """Scheduled job. Fetches subs from DB and saves them in a CSV file, at given time everyday."""
     schedule.every().day.at("12:39:00").do(write_subs)
     while True:
@@ -75,17 +80,18 @@ def sort_sub_list() -> list:
     return subs
 
 
-def send_weather_msg(user_id, update): # get the id of user and send the msg
+def send_weather_msg(user_id, city, subbed_for, f1, f2, f3, bot): # get the id of user and send the msg
     """Send msg to the user."""
-    get_sub_type()
-    update.message.reply_text(f"") # stopped here, get back to it
-    print('msg sent.')
+    func = [f1, f2, f3][subbed_for-1]
+    post_code = gw.find_postal_code(city)
+    bot.send_message(user_id, func(city, post_code))
+    logger.info(f"Weather msg to user {user_id} has been sent.")
 
 
-def check_sub_hour(update_subs):
+def check_sub_hour(update_subs, bot):
     """Creates a list of subscribers (tuples). Checks if the hour matches the sub_hour (yet to be improved, not efficient enough?),
     sends weather_msg. Goes idle if no subscribers left for the day."""
-    subs = sort_sub_list() # new day event needs to be created here.
+    subs = sort_sub_list() # new day event <- here
     while True:
         try:
             if update_subs.is_set():
@@ -95,7 +101,9 @@ def check_sub_hour(update_subs):
                 logger.info('Subs message schedule list updated.')
             if subs[0][2][:5] == current_hr_m():    # 0-first user, 2-hour L element, :5-HH:MM format
                 user_id = subs[0][0]
-                send_weather_msg(user_id)
+                city = subs[0][1]
+                subbed_for = int(subs[0][3])
+                send_weather_msg(user_id, city, subbed_for, gw.weather_now, gw.weather_today, gw.weather_tomorrow, bot)
                 del subs[0]
             else:
                 sleep(3) # potential problem - if subs number on given minute > 60s/sleep - the overall

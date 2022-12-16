@@ -18,7 +18,7 @@ today = datetime.today().date()
 tomorrow = strftime("%Y-%m-%d", gmtime(time() + 86400))
 
 
-def find_postal_code(city):
+def find_postal_code(city) -> str:
     """Makes post_code arg optional. Scrapes the web for it and returns."""
     validate_city(city)
     not_found = f"""Sorry, we couldn't find post code for {city.title()}. Enter it manually.
@@ -31,7 +31,7 @@ def find_postal_code(city):
         raw_pcode = re.sub(r'<.*?>', '', str(tagged_pcode[pcode_index]))        # strip post code from html tags.
         if raw_pcode == 'None':     # no post_code, return error msg
             return not_found
-        logger.info("Post code found on GEONAMES.ORG")
+        logger.info(f"Post code for {city} found on GEONAMES.ORG")
         return raw_pcode        # pcode found, return it
     except ValueError:      # if 'TRY' does not find post code, it raises value error.
         w_url = requests.get(f"https://en.wikipedia.org/wiki/{city}").text
@@ -40,7 +40,7 @@ def find_postal_code(city):
         raw_pcode = re.sub(r"<.*?>", '', str(tagged_pcode))
         if raw_pcode == 'None':
             return not_found
-        logger.info("Post code found on WIKIPEDIA.ORG")
+        logger.info(f"Post code for {city} found on WIKIPEDIA.ORG")
         return raw_pcode
  
 
