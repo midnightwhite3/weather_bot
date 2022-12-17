@@ -1,0 +1,84 @@
+2022-12-17 09:48:17,976 - INFO - Bot is running..
+2022-12-17 09:48:17,977 - INFO - Opening file: subs.csv
+2022-12-17 09:48:18,037 - INFO - Connected to database.
+2022-12-17 09:48:18,071 - INFO - Changes commited.
+2022-12-17 09:48:18,071 - INFO - Database connection closed.
+2022-12-17 09:48:18,072 - INFO - Data saved to subs.csv successfully. Closing.
+2022-12-17 09:48:18,074 - INFO - Opening file: subs.csv
+2022-12-17 09:48:18,074 - INFO - Scheduler started
+2022-12-17 09:48:18,074 - INFO - Data from subs.csv read successfully. Closing.
+2022-12-17 09:48:18,074 - INFO - No subs left for today. Going to sleep.
+2022-12-17 09:48:21,351 - INFO - Received signal 2 (SIGINT), stopping...
+2022-12-17 09:48:21,351 - INFO - Scheduler has been shut down
+2022-12-17 09:48:21,510 - WARNING - Exiting immediately!
+2022-12-17 09:50:22,514 - INFO - Bot is running..
+2022-12-17 09:50:22,514 - INFO - Opening file: subs.csv
+2022-12-17 09:50:22,561 - INFO - Connected to database.
+2022-12-17 09:50:22,563 - INFO - Changes commited.
+2022-12-17 09:50:22,564 - INFO - Database connection closed.
+2022-12-17 09:50:22,564 - INFO - Data saved to subs.csv successfully. Closing.
+2022-12-17 09:50:22,566 - INFO - Scheduler started
+2022-12-17 09:50:22,566 - INFO - Opening file: subs.csv
+2022-12-17 09:50:22,567 - INFO - Data from subs.csv read successfully. Closing.
+2022-12-17 09:50:24,286 - INFO - Received signal 2 (SIGINT), stopping...
+2022-12-17 09:50:24,286 - INFO - Scheduler has been shut down
+2022-12-17 09:50:24,469 - WARNING - Exiting immediately!
+2022-12-17 09:52:46,279 - INFO - Bot is running..
+2022-12-17 09:52:46,280 - INFO - Opening file: subs.csv
+2022-12-17 09:52:46,326 - INFO - Connected to database.
+2022-12-17 09:52:46,327 - INFO - Changes commited.
+2022-12-17 09:52:46,328 - INFO - Database connection closed.
+2022-12-17 09:52:46,328 - INFO - Data saved to subs.csv successfully. Closing.
+2022-12-17 09:52:46,331 - INFO - Opening file: subs.csv
+2022-12-17 09:52:46,331 - INFO - Scheduler started
+2022-12-17 09:52:46,331 - INFO - Data from subs.csv read successfully. Closing.
+2022-12-17 09:52:47,597 - INFO - Received signal 2 (SIGINT), stopping...
+2022-12-17 09:52:47,597 - INFO - Scheduler has been shut down
+2022-12-17 09:52:47,781 - WARNING - Exiting immediately!
+2022-12-17 09:54:42,541 - INFO - Bot is running..
+2022-12-17 09:54:42,542 - INFO - Opening file: subs.csv
+2022-12-17 09:54:42,588 - INFO - Connected to database.
+2022-12-17 09:54:42,590 - INFO - Changes commited.
+2022-12-17 09:54:42,590 - INFO - Database connection closed.
+2022-12-17 09:54:42,590 - INFO - Data saved to subs.csv successfully. Closing.
+2022-12-17 09:54:42,593 - INFO - Opening file: subs.csv
+2022-12-17 09:54:42,593 - INFO - Scheduler started
+2022-12-17 09:54:42,593 - INFO - Data from subs.csv read successfully. Closing.
+2022-12-17 09:54:42,594 - INFO - No subs left for today. Going to sleep.
+2022-12-17 09:56:19,559 - INFO - Connected to database.
+2022-12-17 09:56:19,567 - INFO - Changes commited.
+2022-12-17 09:56:19,567 - INFO - Database connection closed.
+2022-12-17 09:56:19,567 - INFO - 5616914626 updated 'send_msg_hour' as 10:00:00.
+2022-12-17 09:56:19,567 - INFO - Database data has changed. Starting protocol...
+2022-12-17 09:56:19,568 - INFO - Opening file: subs.csv
+2022-12-17 09:56:19,608 - INFO - Connected to database.
+2022-12-17 09:56:19,609 - INFO - Changes commited.
+2022-12-17 09:56:19,609 - INFO - Database connection closed.
+2022-12-17 09:56:19,610 - INFO - Data saved to subs.csv successfully. Closing.
+2022-12-17 09:56:19,610 - INFO - Exiting protocol.
+2022-12-17 09:56:19,610 - INFO - New sub, updating list...
+2022-12-17 09:56:19,610 - INFO - Opening file: subs.csv
+2022-12-17 09:56:19,610 - INFO - Data from subs.csv read successfully. Closing.
+2022-12-17 09:56:19,610 - INFO - Subs message schedule list updated.
+2022-12-17 09:56:19,610 - INFO - No subs left for today. Going to sleep.
+2022-12-17 09:59:52,557 - INFO - Received signal 2 (SIGINT), stopping...
+2022-12-17 09:59:52,557 - INFO - Scheduler has been shut down
+2022-12-17 09:59:52,725 - WARNING - Exiting immediately!
+2022-12-17 10:00:03,737 - INFO - Opening file: subs.csv
+2022-12-17 10:00:03,738 - INFO - Data from subs.csv read successfully. Closing.
+2022-12-17 10:00:29,323 - INFO - Opening file: subs.csv
+2022-12-17 10:00:29,324 - INFO - Data from subs.csv read successfully. Closing.
+2022-12-17 11:43:56,603 - INFO - Bot is running..
+2022-12-17 11:43:56,604 - INFO - Opening file: subs.csv
+2022-12-17 11:43:56,649 - INFO - Connected to database.
+2022-12-17 11:43:56,650 - INFO - Changes commited.
+2022-12-17 11:43:56,651 - INFO - Database connection closed.
+2022-12-17 11:43:56,651 - INFO - Data saved to subs.csv successfully. Closing.
+2022-12-17 11:43:56,653 - INFO - Opening file: subs.csv
+2022-12-17 11:43:56,653 - INFO - Scheduler started
+2022-12-17 11:43:56,653 - INFO - Data from subs.csv read successfully. Closing.
+2022-12-17 11:44:13,795 - INFO - Received signal 2 (SIGINT), stopping...
+2022-12-17 11:44:13,796 - INFO - Scheduler has been shut down
+2022-12-17 11:44:13,947 - WARNING - Exiting immediately!
+2022-12-17 12:31:01,478 - INFO - Opening file: subs.csv
+2022-12-17 12:31:01,479 - INFO - Data from subs.csv read successfully. Closing.

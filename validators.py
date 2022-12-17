@@ -1,11 +1,12 @@
 import re
 from datetime import datetime
+import datetime as dt
 
-# TODO: instead of return false, just raise the exception, less code, no IF ELSE needed in another functions. Up to refactoring.
+# TODO: instead of returning false, just raise the exception, less code, no IF ELSE needed in another functions. Up to refactoring.
 # TODO: create Validator class?
 
-current_time = datetime.now()
-now = f"{current_time.hour}:{current_time.minute}"
+now = datetime.now().strftime("%H:%M")
+# now = f"{current_time.hour}:{current_time.minute}"
 
 
 def validate_sub_type(sub):

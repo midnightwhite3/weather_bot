@@ -1,12 +1,12 @@
 from time import sleep
 from datetime import datetime
-from handle_data import sub_type
 import schedule
 import csv
 from settings import logger
 from operator import itemgetter
 from validators import is_hour_greater
 import get_weather as gw
+import os
 
 """According to python-telegram-bot docs threading may couse problems and it is better to use asyncio
 library."""
@@ -21,7 +21,6 @@ library."""
 # like write subs -> create_sub_list -> 
 # TODO: write task to delete old log files
 # TODO: allow to save postal code along with city name, get post code from database, less problematic and faster?
-# TODO: save chat id to send messages. Check if delete chat and creating new changes its id
 
 
 def current_hr_m() -> str:
@@ -32,7 +31,14 @@ def new_day():
     pass
 
 
-def write_subs():
+def delete_logs(log_files: int):
+    """Keeps last (log_files) log files, removes the rest."""
+    logs = os.listdir(f"{os.getcwd()}\logs")
+    # if len(logs) > log_files:
+    print(logs) # always keep log_files number of files, back to it
+
+
+def write_subs():   # add path as arg
     from handle_data import fetch_subs
     """Temporary to catch the return of scheduled Job. Looking for more
         sufficient method."""
@@ -49,7 +55,7 @@ def write_subs():
         logger.error(f"Writing data error: {err}\n{type(err)}")
 
 
-def read_subs() -> list:
+def read_subs() -> list:    # add path as arg
     """Read subbed user from csv file."""
     subbed_users = []
     try:
@@ -65,9 +71,9 @@ def read_subs() -> list:
         logger.error(f"Reading data error: {err}\n{type(err)}")
 
 
-def get_subscribers():  # maybe create new_day event instead of schedule?
+def get_subscribers():  # add hour as arg
     """Scheduled job. Fetches subs from DB and saves them in a CSV file, at given time everyday."""
-    schedule.every().day.at("12:39:00").do(write_subs)
+    schedule.every().day.at("00:01:00").do(write_subs)
     while True:
         schedule.run_pending()
         sleep(1)
@@ -80,11 +86,11 @@ def sort_sub_list() -> list:
     return subs
 
 
-def send_weather_msg(user_id, city, subbed_for, f1, f2, f3, bot): # get the id of user and send the msg
+def send_weather_msg(user_id, city, subbed_for, f1, f2, f3, bot) -> callable:
     """Send msg to the user."""
-    func = [f1, f2, f3][subbed_for-1]
+    func = [f1, f2, f3][subbed_for-1]   # list of weather_msg funcs, indexing by the subscription type
     post_code = gw.find_postal_code(city)
-    bot.send_message(user_id, func(city, post_code))
+    bot.send_message(user_id, func(city, post_code))    # bot object. Sending message
     logger.info(f"Weather msg to user {user_id} has been sent.")
 
 

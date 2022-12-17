@@ -56,7 +56,7 @@ def get_weather_now_json(city, post_code):
     return json_response
 
 
-def get_country(data):
+def get_country(data) -> str:
     try:
         if 'sys' in data: msg = f"Country: {data['sys']['country']}\n"
         elif 'city' in data: msg = f"Country: {data['city']['country']}\n"
@@ -66,7 +66,7 @@ def get_country(data):
         pass
 
 
-def check_status(json_response):
+def check_status(json_response) -> str:
     err_cod = str(json_response['cod']) # status code returned from openweather
     msg = "No message in response."
     if  'message' in json_response:      # openweather API not always returns this in response, KEY error solution
@@ -83,7 +83,7 @@ def check_status(json_response):
     else: pass  # no errors, pass it
 
 
-def weather_message(data, timezone):
+def weather_message(data, timezone) -> str:
     """Converts json response to actual message, readable for the user."""
     try:
         msg = f"\n🕗{strftime('%H:%M', gmtime(data['dt']))} + {str(int(timezone/3600))}h | "    # 3600s in hr gets difference between timezones
@@ -119,7 +119,7 @@ def weather_message(data, timezone):
         return "Something is wrong, try again later."
     
 
-def weather_today(city, post_code):
+def weather_today(city, post_code) -> str:
     """Open weather API call is for 5 days, function returns weather for the current day via 'weather_message'
        and adds sunrise/sunset text to the message."""
     weather_json = get_forecast_json(city=city, post_code=post_code)
@@ -135,7 +135,7 @@ def weather_today(city, post_code):
     return msg
 
 
-def weather_now(city, post_code):
+def weather_now(city, post_code) -> str:
     """Makes an API call and returns weather for now via 'weather_message' and adds sunset/sunrise text
        to the message."""
     weather_json = get_weather_now_json(city, post_code)
@@ -149,7 +149,7 @@ def weather_now(city, post_code):
     return msg
 
 
-def weather_tomorrow(city, post_code):
+def weather_tomorrow(city, post_code) -> str:
     """Look, weather_today -> but for tomorrow."""
     weather_json = get_forecast_json(city=city, post_code=post_code)
     check_status(weather_json)
@@ -164,12 +164,12 @@ def weather_tomorrow(city, post_code):
     return msg
 
 
-def get_wind_direction(degree):
+def get_wind_direction(degree) -> str:
     """Fetches wind directions in degrees and changes it to one of 8 directions of the world."""
     wind_deg = degree['wind']['deg']
     directions = ['⬆️N', '↗️NE', '➡️E', '↘️SE', '⬇️S', '↙️SW', '⬅️W', '↖️NW']
     degrees = int((wind_deg/45)+.5)
-    return directions[(degrees % 8)]    # modulo still kind of mystery for me, list wrapper.
+    return directions[(degrees % 8)]    # modulo list wrapper.
 
 
 def get_telegram_reponse():

@@ -1,11 +1,10 @@
-from telegram.ext import *  # not a good habit to import all. Func names can override themselves
+from telegram.ext import Updater, CommandHandler
 from telegram.bot import Bot
 import get_weather as gw
 from settings import logger, telegram_key
 import handle_data as hd
 import traceback
 from validators import is_time, validate_sub_type, has_number, validate_city
-# from tasks import db_change_event
 from threading import Event, Thread
 import signal
 from tasks import get_subscribers, check_sub_hour, write_subs
@@ -185,7 +184,7 @@ def db_check():
 
 
 if __name__ == '__main__':
-    write_subs()    # create sub file everytime program starts.
+    write_subs()    # create sub file on every startup.
     updater = Updater(telegram_key, use_context=True)
     bot = Bot(token=telegram_key)
     dp = updater.dispatcher
@@ -202,7 +201,6 @@ if __name__ == '__main__':
     dp.add_handler(CommandHandler('unsub', unsub_command))
     dp.add_error_handler(error)
 
-
     DB_subs_to_csv = Thread(target=get_subscribers)
     sub_msg_send = Thread(target=check_sub_hour, args=(update_subs, bot))
     check = Thread(target=db_check)
@@ -211,7 +209,6 @@ if __name__ == '__main__':
     sub_msg_send.start()
     check.start()
     
-
     updater.start_polling(2.0)
     updater.idle()
     
