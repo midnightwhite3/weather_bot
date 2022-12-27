@@ -4,9 +4,11 @@ import schedule
 import csv
 from settings import logger
 from operator import itemgetter
-from validators import is_hour_greater
+from validators import is_hour_greater, str_to_date, extension_strip
 import get_weather as gw
 import os
+
+now = datetime.now().date().strftime("%Y-%m-%d")
 
 """According to python-telegram-bot docs threading may couse problems and it is better to use asyncio
 library."""
@@ -31,11 +33,13 @@ def new_day():
     pass
 
 
-def delete_logs(log_files: int):
+def delete_logs(log_files: int): # change the variable name, not very accurate
     """Keeps last (log_files) log files, removes the rest."""
     logs = os.listdir(f"{os.getcwd()}\logs")
-    # if len(logs) > log_files:
-    print(logs) # always keep log_files number of files, back to it
+    if len(logs) > log_files:
+        logger.info("Deleting old log files...")
+        del logs[0:len(logs)-log_files] # just a list for now, get the file paths and delete them
+        logger.info(f"Number of logs deleted: {log_files}. Logs remaining: {len(logs)}")
 
 
 def write_subs():   # add path as arg
@@ -117,3 +121,5 @@ def check_sub_hour(update_subs, bot):
         except IndexError:
             logger.info('No subs left for today. Going to sleep.')
             update_subs.wait()
+
+delete_logs(4)

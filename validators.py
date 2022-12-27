@@ -39,5 +39,16 @@ def validate_city(city):
 
 
 def is_hour_greater(subscribers: list) -> list:
+    """Returns list of subscribers with subbed_hour greater than current hour."""
     subs = [sub for sub in subscribers if sub[2] >= now]
     return subs
+
+
+def str_to_date(date_str: str) -> datetime:
+    """Converts str type to datetime."""
+    return datetime.strptime(date_str, "%m/%d/%y")
+
+
+def extension_strip(filename: str, ext: str) -> str:
+    """Removes file extensions from filenames."""
+    return filename.strip(ext)
