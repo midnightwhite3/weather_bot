@@ -1,7 +1,7 @@
 from telegram.ext import Updater, CommandHandler
 from telegram.bot import Bot
 import get_weather as gw
-from settings import logger, telegram_key
+from settings import logger, telegram_key, SUBS_PATH, GET_SUBS_HOUR
 import handle_data as hd
 import traceback
 from validators import is_time, validate_sub_type, has_number, validate_city
@@ -76,7 +76,7 @@ def save_city_command(update, context):
         logger.error(traceback.print_exc())
 
 
-def help_command(update, context):
+def help_command(update, context):  # needs an update
     """Command displaying detailed informations about usage to the user."""
     msg = ("""I can show you the weather for any city in the world u ask!
     In order to do that, you must use one of the commands:
@@ -177,14 +177,14 @@ def db_check():
     while True:
         db_change_event.wait()
         logger.info('Database data has changed. Starting protocol...')
-        write_subs()
+        write_subs(SUBS_PATH)
         db_change_event.clear()
         logger.info('Exiting protocol.')
         update_subs.set()
 
 
 if __name__ == '__main__':
-    write_subs()    # create sub file on every startup.
+    write_subs(SUBS_PATH)
     updater = Updater(telegram_key, use_context=True)
     bot = Bot(token=telegram_key)
     dp = updater.dispatcher
@@ -201,7 +201,7 @@ if __name__ == '__main__':
     dp.add_handler(CommandHandler('unsub', unsub_command))
     dp.add_error_handler(error)
 
-    DB_subs_to_csv = Thread(target=get_subscribers)
+    DB_subs_to_csv = Thread(target=get_subscribers, args=(GET_SUBS_HOUR,))
     sub_msg_send = Thread(target=check_sub_hour, args=(update_subs, bot))
     check = Thread(target=db_check)
     signal.signal(signal.SIGINT, signal.SIG_DFL) # allows ctrl + c exit

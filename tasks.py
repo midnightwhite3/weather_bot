@@ -2,9 +2,9 @@ from time import sleep
 from datetime import datetime
 import schedule
 import csv
-from settings import logger
+from settings import logger, SUBS_PATH
 from operator import itemgetter
-from validators import is_hour_greater, str_to_date, extension_strip
+from validators import is_hour_greater
 import get_weather as gw
 import os
 
@@ -30,24 +30,30 @@ def current_hr_m() -> str:
 
 
 def new_day():
+    """Write it to work like an event or a trigger."""
     pass
 
-
-def delete_logs(log_files: int): # change the variable name, not very accurate
-    """Keeps last (log_files) log files, removes the rest."""
-    logs = os.listdir(f"{os.getcwd()}\logs")
-    if len(logs) > log_files:
+ 
+def delete_logs(logs_path: str, n_logs: int=None):
+    """Keeps 'n_logs' number of files in given path to logs folder, deletes old files."""
+    logs = os.listdir(logs_path)
+    if len(logs) > n_logs:
+        f_to_remove = len(logs) - n_logs
+        print(f_to_remove)
         logger.info("Deleting old log files...")
-        del logs[0:len(logs)-log_files] # just a list for now, get the file paths and delete them
-        logger.info(f"Number of logs deleted: {log_files}. Logs remaining: {len(logs)}")
+        for _ in range(f_to_remove):
+            filename = os.path.join(logs_path, logs[0])
+            del logs[0]
+            os.remove(filename)
+        logger.info(f"Number of logs deleted: {f_to_remove}. Logs remaining: {len(logs)}")
 
 
-def write_subs():   # add path as arg
+def write_subs(subs_path: str):
     from handle_data import fetch_subs
     """Temporary to catch the return of scheduled Job. Looking for more
         sufficient method."""
     try:
-        with open("subs.csv", 'w', newline="") as f:
+        with open(subs_path, 'w', newline="") as f:
             logger.info(f"Opening file: {f.name}")
             csv_writer = csv.writer(f)
             csv_writer.writerow(['id', 'city', 'hour', 'subbed_for'])
@@ -59,11 +65,11 @@ def write_subs():   # add path as arg
         logger.error(f"Writing data error: {err}\n{type(err)}")
 
 
-def read_subs() -> list:    # add path as arg
+def read_subs(subs_path: str) -> list:
     """Read subbed user from csv file."""
     subbed_users = []
     try:
-        with open("subs.csv", "r") as f:
+        with open(subs_path, "r") as f:
             logger.info(f"Opening file: {f.name}")
             csv_reader = csv.reader(f, delimiter=',')
             next(csv_reader)    # skip header
@@ -75,9 +81,9 @@ def read_subs() -> list:    # add path as arg
         logger.error(f"Reading data error: {err}\n{type(err)}")
 
 
-def get_subscribers():  # add hour as arg
+def get_subscribers(hour: str):
     """Scheduled job. Fetches subs from DB and saves them in a CSV file, at given time everyday."""
-    schedule.every().day.at("00:01:00").do(write_subs)
+    schedule.every().day.at(hour).do(write_subs)
     while True:
         schedule.run_pending()
         sleep(1)
@@ -85,7 +91,7 @@ def get_subscribers():  # add hour as arg
 
 def sort_sub_list() -> list:
     """Reads subs from CSV, sorts them by message_hour. Removes sub from list - now <= message_hour."""
-    subs = sorted(read_subs(), key=itemgetter(2))
+    subs = sorted(read_subs(SUBS_PATH), key=itemgetter(2))
     subs = is_hour_greater(subs)
     return subs
 
@@ -101,7 +107,7 @@ def send_weather_msg(user_id, city, subbed_for, f1, f2, f3, bot) -> callable:
 def check_sub_hour(update_subs, bot):
     """Creates a list of subscribers (tuples). Checks if the hour matches the sub_hour (yet to be improved, not efficient enough?),
     sends weather_msg. Goes idle if no subscribers left for the day."""
-    subs = sort_sub_list() # new day event <- here
+    subs = sort_sub_list() # new day event <- here???
     while True:
         try:
             if update_subs.is_set():
@@ -121,5 +127,3 @@ def check_sub_hour(update_subs, bot):
         except IndexError:
             logger.info('No subs left for today. Going to sleep.')
             update_subs.wait()
-
-delete_logs(4)
