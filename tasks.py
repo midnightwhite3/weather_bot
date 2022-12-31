@@ -2,7 +2,7 @@ from time import sleep
 from datetime import datetime
 import schedule
 import csv
-from settings import logger, SUBS_PATH
+from settings import logger, SUBS_PATH, KEEP_N_LOGS, NEW_DAY
 from operator import itemgetter
 from validators import is_hour_greater
 import get_weather as gw
@@ -28,14 +28,19 @@ library."""
 def current_hr_m() -> str:
     return datetime.now().strftime("%H:%M")
 
-
-def new_day():
+def new_day(hour):  # have two sheduled jobs as funcs, write them as variables? less code
     """Write it to work like an event or a trigger."""
-    pass
+    # while True:
+    #     if current_hr_m() == "00:01":
+    #         pass
+    # pass
+    while True:
+        schedule.every().day.at(hour).do()
 
  
 def delete_logs(logs_path: str, n_logs: int=None):
-    """Keeps 'n_logs' number of files in given path to logs folder, deletes old files."""
+    """'n_log' is the number of log files you want keep. Only most recent files are krept, the rest is deleted.
+    Later in the code it runs as a task every day, to save the space."""
     logs = os.listdir(logs_path)
     if len(logs) > n_logs:
         f_to_remove = len(logs) - n_logs
@@ -49,7 +54,7 @@ def delete_logs(logs_path: str, n_logs: int=None):
 
 
 def write_subs(subs_path: str):
-    from handle_data import fetch_subs
+    from handle_data import fetch_subs  # circular import
     """Temporary to catch the return of scheduled Job. Looking for more
         sufficient method."""
     try:
@@ -81,12 +86,11 @@ def read_subs(subs_path: str) -> list:
         logger.error(f"Reading data error: {err}\n{type(err)}")
 
 
-def get_subscribers(hour: str):
+def new_day_tasks():
     """Scheduled job. Fetches subs from DB and saves them in a CSV file, at given time everyday."""
-    schedule.every().day.at(hour).do(write_subs)
-    while True:
-        schedule.run_pending()
-        sleep(1)
+    schedule.every().day.at(NEW_DAY).do(write_subs, args=(SUBS_PATH))
+    schedule.every().day.at(NEW_DAY).do(delete_logs, args=(SUBS_PATH, KEEP_N_LOGS))
+    pass
 
 
 def sort_sub_list() -> list:

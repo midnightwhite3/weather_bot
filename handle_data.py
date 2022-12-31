@@ -1,28 +1,21 @@
+### In this project, PSQL database is used. ###
+
 import psycopg2 as psc
-from settings import DB_NAME, DB_USER, DB_PSWRD, logger
+from settings import DB_NAME, DB_USER, DB_PSWRD, logger, SUB_TYPE
 import traceback
 
 # asyncpg
 
 # IMPORTANT TODO: Make db connection on program run, not every time when DB operation
-# is made - DB_func -> connect_to_DB -> make_changes -> close_connection  /  verify if im right.
+# is made - DB_func -> connect_to_DB -> make_changes -> close_connection  /  verify if im right. Check if it is the most efficient solution.
 
-# TODO: functions there are not yet completed. Error handling, conditional statements, any other actions
-# to improve these functions
 # TODO: write specified exceptions for funcs
 # TODO: improve DBError traceback
 # TODO: exception in DBError class to not duck type it in every function
-# TODO: delete seconds from send_msg_hour? dont allow user to type seconds, just set them to 0?
+# TODO: delete seconds from send_msg_hour? dont allow user to type seconds, just set them to 0 as a deafult?
 
 ### IMPORTANT ### 
-"""F STRINGS WITH SQL ---> BIG NONO"""
-
-sub_type = {
-    'unsubbed': 0,
-    'now': 1,
-    'today': 2,
-    'tomorrow': 3,
-}                   # maybe unnecessary complication? just store it as it is (a word).
+"""F STRINGS WITH SQL ---> BIG NONO, according to docs"""
 
 
 class DBError(Exception):
@@ -160,7 +153,7 @@ def unsubscribe(user_id: int):
                      subbed_date = %s,
                      send_msg_hour = %s
                      WHERE user_id = %s"""
-            data = (sub_type['unsubbed'], None, None, None, user_id)
+            data = (SUB_TYPE['unsubbed'], None, None, None, user_id)
             cur.execute(update, data)
     except Exception as error:
         logger.error(f"ERROR: {error} | TYPE: {type(error)}")

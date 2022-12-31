@@ -1,13 +1,13 @@
 from telegram.ext import Updater, CommandHandler
 from telegram.bot import Bot
 import get_weather as gw
-from settings import logger, telegram_key, SUBS_PATH, GET_SUBS_HOUR
+from settings import logger, telegram_key, SUBS_PATH, NEW_DAY
 import handle_data as hd
 import traceback
 from validators import is_time, validate_sub_type, has_number, validate_city
 from threading import Event, Thread
 import signal
-from tasks import get_subscribers, check_sub_hour, write_subs
+from tasks import new_day_tasks, check_sub_hour, write_subs
 
 
 # TODO: check if msg hours includes timezoning, maybe user must specify it? look pytz
@@ -22,7 +22,7 @@ def weather_msg_conditional(update, context, weather_func):
     """Function validates user input and returns the message."""
     if len(context.args) == 0:
         return update.message.reply_text("You need to give the city name.") # return to stop func right there, if not it continues and returns 2 error messages
-    elif len(context.args) > 1:       # check if user msg has more than 1 word
+    elif len(context.args) > 1:       # check if user_msg has more than 1 word
         if not has_number(context.args[-1]):    # verify that the last word is a post code or not
             city = " ".join(context.args)       # if its not post code, that means all words are a city name
             post_code = gw.find_postal_code(city)  # in that case we look for the post code
@@ -62,7 +62,7 @@ def save_city_command(update, context):
         city = ' '.join(context.args)
         validate_city(city)
         # if has_number(city):
-        #     update.message.reply_text(f"{city.title()} is not a valid city name.")
+        #     update.message.reply_text(f"{city.title()} is not a valid city name.") ???
         user_name = update.message.from_user.name
         user_id = update.message.from_user.id
         if not hd.user_exists(user_id):
@@ -201,7 +201,7 @@ if __name__ == '__main__':
     dp.add_handler(CommandHandler('unsub', unsub_command))
     dp.add_error_handler(error)
 
-    DB_subs_to_csv = Thread(target=get_subscribers, args=(GET_SUBS_HOUR,))
+    DB_subs_to_csv = Thread(target=new_day_tasks)
     sub_msg_send = Thread(target=check_sub_hour, args=(update_subs, bot))
     check = Thread(target=db_check)
     signal.signal(signal.SIGINT, signal.SIG_DFL) # allows ctrl + c exit
