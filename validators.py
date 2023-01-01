@@ -6,7 +6,6 @@ import datetime as dt
 # TODO: create Validator class?
 
 now = datetime.now().strftime("%H:%M")
-# now = f"{current_time.hour}:{current_time.minute}"
 
 
 def validate_sub_type(sub):

@@ -2,7 +2,7 @@ from time import sleep
 from datetime import datetime
 import schedule
 import csv
-from settings import logger, SUBS_PATH, KEEP_N_LOGS, NEW_DAY
+from settings import logger, SUBS_PATH, KEEP_N_LOGS, NEW_DAY, LOGS_PATH
 from operator import itemgetter
 from validators import is_hour_greater
 import get_weather as gw
@@ -27,15 +27,6 @@ library."""
 
 def current_hr_m() -> str:
     return datetime.now().strftime("%H:%M")
-
-def new_day(hour):  # have two sheduled jobs as funcs, write them as variables? less code
-    """Write it to work like an event or a trigger."""
-    # while True:
-    #     if current_hr_m() == "00:01":
-    #         pass
-    # pass
-    while True:
-        schedule.every().day.at(hour).do()
 
  
 def delete_logs(logs_path: str, n_logs: int=None):
@@ -87,10 +78,12 @@ def read_subs(subs_path: str) -> list:
 
 
 def new_day_tasks():
-    """Scheduled job. Fetches subs from DB and saves them in a CSV file, at given time everyday."""
-    schedule.every().day.at(NEW_DAY).do(write_subs, args=(SUBS_PATH))
-    schedule.every().day.at(NEW_DAY).do(delete_logs, args=(SUBS_PATH, KEEP_N_LOGS))
-    pass
+    """Scheduled jobs. Done on NEW_DAY hour, specified in settings.py"""
+    schedule.every().day.at(NEW_DAY).do(write_subs, subs_path=SUBS_PATH)
+    schedule.every().day.at(NEW_DAY).do(delete_logs, logs_path=LOGS_PATH,  n_logs=KEEP_N_LOGS)
+    while True:
+        schedule.run_pending()
+        sleep(10)
 
 
 def sort_sub_list() -> list:

@@ -1,7 +1,7 @@
 from telegram.ext import Updater, CommandHandler
 from telegram.bot import Bot
 import get_weather as gw
-from settings import logger, telegram_key, SUBS_PATH, NEW_DAY
+from settings import logger, telegram_key, SUBS_PATH, SUB_TYPE
 import handle_data as hd
 import traceback
 from validators import is_time, validate_sub_type, has_number, validate_city
@@ -14,6 +14,7 @@ from tasks import new_day_tasks, check_sub_hour, write_subs
 # TODO: look for city database online to perfectly validate city input.
 # ^^ or make own DB, write a script to upload city names from web to *csv file.
 # TODO: write custom logger level info
+# TODO: write func -> send message to subbed users when bot is going offline and when its up?
 
 logger.info("Bot is running..")
 
@@ -122,7 +123,7 @@ def subscribe_command(update, context):
         update.message.reply_text(f"""You must specify subscription type.\nOptions are - tomorrow, today, now.\nExample:
         /sub new york today 08:00:00""")
         return
-    sub = hd.sub_type[validate_sub_type(' '.join(context.args))]    # user typed sub type, use dict to convert it to numeric
+    sub = SUB_TYPE[validate_sub_type(' '.join(context.args))]    # user typed sub type, use dict to convert it to numeric
     if type(hour) == str and type(subbed) == str:      # if it's string, hour and sub type is given
         city = " ".join(context.args[:-2])
     elif type(subbed) == str and len(context.args[:-1]) > 1:

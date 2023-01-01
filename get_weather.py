@@ -9,6 +9,8 @@ from validators import validate_city
 # TODO: merge weather_now and weather_tomorrow functions?
 # TODO: divide find_postal_code func in two? each function for each site? a Class perhaps?
 # TODO: divide weather_message to more smaller functions?
+# TODO: when message is sent to subbed user, and post code is not in database, save it and next time
+#       when msg is requested, fetch the post code from the database. More efficient?
 
 
 class StatusError(Exception): pass
