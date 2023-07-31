@@ -1,4 +1,4 @@
 # __init__.py
 
-from .general import *
+from .parsers import *
 from .validators import *

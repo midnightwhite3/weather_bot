@@ -18,7 +18,7 @@ def API_call_counter(fn):
             return fn(*args, **kwargs)
         except database.DBError:
             return "You've reached call's per day limit. Come back tomorrow."
-        except Exception as err:
+        except Exception as err: # change it
             settings.logger.warning(f'API call counter error - {err}')
     return wrapper
 

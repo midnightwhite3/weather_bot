@@ -43,7 +43,7 @@ def check_sub_hour(update_subs: Event, bot):
                 subs = tasks.sort_sub_list()
                 update_subs.clear()
                 logger.info('Subs message schedule list updated.')
-            if subs[0][2][:5] == my_utils.general.current_hr_m():    # 0-first user, 2-hour L element, :5-HH:MM format
+            if subs[0][2][:5] == my_utils.parsers.current_hr_m():    # 0-first user, 2-hour L element, :5-HH:MM format
                 # user_id = subs[0][0]
                 # city = subs[0][1]
                 # subbed_for = int(subs[0][3])

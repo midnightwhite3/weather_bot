@@ -13,37 +13,17 @@ def find_postal_code(city: str, user_id=None) -> str:
        Post code database saving and retrieving yet to be improved.
        just scrapes the web for post code for now.
     """
-    # if is_post_code(user_id) is True:
-    #     return get_post_code(user_id)
     my_utils.validate_city(city)
-    not_found = f"""Sorry, we couldn't find post code for {city.title()}. Enter it manually.
-                Example - 'new york 10001'"""
     try:
-        g_url = requests.get(settings.GEONAMES.format(city=city)).text
-        soup = BeautifulSoup(g_url, "html.parser")
-        pcode_index = [x.text for x in soup.find_all('th')].index('Code')       # find index of post code in table.
-        tagged_pcode = soup.find('table', attrs={'class': 'restable'}).findAll('td')
-        raw_pcode = re.sub(r'<.*?>', '', str(tagged_pcode[pcode_index]))        # strip post code from html tags.
-        if raw_pcode == 'None':     # no post_code, return error msg
-            return not_found
-        settings.logger.info(f"Post code for {city} found on GEONAMES.ORG")
-        # save_post_code(user_id, raw_pcode)
-        return raw_pcode        # pcode found, return it
-    except ValueError:      # if 'TRY' does not find post code, it raises value error.
-        w_url = requests.get(settings.WIKI.format(city=city)).text
-        soup = BeautifulSoup(w_url, "html.parser")
-        tagged_pcode = soup.find('div', attrs={'class': 'postal-code'})
-        raw_pcode = re.sub(r"<.*?>", '', str(tagged_pcode)).split(',')[0]
-        if raw_pcode == 'None':
-            return not_found
-        settings.logger.info(f"Post code for {city} found on WIKIPEDIA.ORG")
-        # save_post_code(user_id, raw_pcode)
-        return raw_pcode
+        helpers.geonames_find_pcode(city)
+    except ValueError:      # ValueError is raised when pcode is not found.
+        helpers.wikipedia_find_pcode(city)
 
 
 # TODO: refacor these functions to be more readable.!!!
 # ^ divide them to more smaller functions
 # ^ ex. assinging data from json response
+# assign and return dict data as another function
 def weather_message(data: dict, timezone: int) -> str:
     """Converts json response to actual message, readable for the user."""
     try:
