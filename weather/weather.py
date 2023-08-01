@@ -1,11 +1,9 @@
-import requests
-import re
-from bs4 import BeautifulSoup
-
 import my_utils
 import helpers
 import settings
 from openweather_api import check_status
+
+
 
 # divide this into two separare funcxtions.!!
 def find_postal_code(city: str, user_id=None) -> str:

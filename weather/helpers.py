@@ -1,5 +1,4 @@
 import requests
-import weather
 import settings
 
 import re
@@ -20,7 +19,7 @@ def get_country(data: dict) -> str:
         # "Country: {data['sys']['country']}\n"
         return country
     except Exception: # cant remember why i put exception here, check OW response
-        weather.settings.logger.exception("Exception occured.", exc_info=True)
+        settings.logger.exception("Exception occured.", exc_info=True)
         pass
 
 
