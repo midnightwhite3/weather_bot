@@ -1,9 +1,10 @@
-# database connect.py
+# database connection.py
+
 import psycopg2 as psc
 from functools import wraps
 
 import settings
-import errors
+from . import errors
 
 ### DB CONTEXT MANAGER ###
 class DBConnection:

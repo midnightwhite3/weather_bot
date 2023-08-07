@@ -1,11 +1,9 @@
 import my_utils
-import helpers
 import settings
-from openweather_api import check_status
+from . import helpers
+from .openweather_api import check_status
 
 
-
-# divide this into two separare funcxtions.!!
 def find_postal_code(city: str, user_id=None) -> str:
     """Makes post_code arg optional. Scrapes the web for it and returns.
        Post code database saving and retrieving yet to be improved.

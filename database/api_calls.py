@@ -2,9 +2,9 @@
 # This file may be redundant, maybe move funcs to updates.py .
 
 import settings
-import errors
+from . import errors
 
-from . import DBConnect
+from .connection import DBConnect
 
 # add_api_call and call limitter can be doen with only SQL statements.
 # change DBError message for this function as status error (wrong error message)
@@ -31,7 +31,7 @@ def API_call_limitter(cur, user_id: int, call_limit=settings.CALL_LIMIT):
 
 @DBConnect
 def remove_API_calls(cur):
-    """Removes API calls for users where call number is bigger than one."""
+    """Removes API calls for users where call number is bigger than zero."""
     update = """UPDATE "user"
              SET call_count = 0
              WHERE call_count > 0""" # just reset all without conditioning? Check performance

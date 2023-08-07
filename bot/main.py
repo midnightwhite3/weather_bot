@@ -5,7 +5,7 @@ from threading import Event, Thread
 from telegram.ext import Updater, CommandHandler
 from telegram.bot import Bot
 
-import my_utils
+import my_utils 
 import weather
 import tasks
 import database
@@ -16,7 +16,7 @@ from settings import logger, TELEGRAM_KEY, SUBS_PATH, SUB_TYPE
 # TODO: check if msg hours includes timezoning, maybe user must specify it? look pytz
 # TODO: write func -> send message to subbed users when bot is going offline and when its up?
 
-def weather_msg_conditional(update, context, weather_func: function, weather_type: str, day=None):
+def weather_msg_conditional(update, context, weather_func, weather_type: str, day=None):
     """Function validates user input and returns the message.
     update - object, contains info and data from telegram,
     context - object, contains info and data about the status of the library (python telegram bot),
@@ -50,12 +50,12 @@ def weather_msg_conditional(update, context, weather_func: function, weather_typ
 
 def today_weather_command(update, context):
     """Today weather command."""
-    weather_msg_conditional(update, context, weather.weather, weather_type='forecast', day=weather.today_date)
+    weather_msg_conditional(update, context, weather.weather, weather_type='forecast', day=my_utils.today_date)
 
 
 def tomorrow_weather_command(update, context):
     """Tomorrow weather command."""
-    weather_msg_conditional(update, context, weather.weather, weather_type='forecast', day=weather.tomorrow_str)
+    weather_msg_conditional(update, context, weather.weather, weather_type='forecast', day=my_utils.tomorrow_str)
 
 
 def now_weather_command(update, context):
@@ -189,13 +189,13 @@ def error(update, context):
     update.message.reply_text(f"Unexpected error occured. Try again later.")
 
 
-def db_check():
+def db_check(event):
     """Func waits for a call from DB using commands. If DB operations, related to subscriptions are made, call an event."""
     while True:
-        db_change_event.wait()
+        event.wait()
         logger.info('Database data has changed. Starting protocol...')
         tasks.write_subs(SUBS_PATH)
-        db_change_event.clear()
+        event.clear()
         logger.info('Exiting protocol.')
         update_subs.set()
 
@@ -224,7 +224,7 @@ if __name__ == '__main__':
 
     DB_subs_to_csv = Thread(target=tasks.new_day_tasks)
     sub_msg_send = Thread(target=tasks.check_sub_hour, args=(update_subs, bot))
-    check = Thread(target=db_check)
+    check = Thread(target=db_check, args=(db_change_event,))
     signal.signal(signal.SIGINT, signal.SIG_DFL) # allows ctrl + c exit
     DB_subs_to_csv.start()
     sub_msg_send.start()

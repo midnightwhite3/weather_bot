@@ -1,9 +1,8 @@
 # query functions for databse operations
-import errors
 import settings
-
-from api_calls import add_API_call
-from connection import DBConnect
+from . import errors
+from .api_calls import add_API_call
+from .connection import DBConnect
 
 
 @DBConnect

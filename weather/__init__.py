@@ -1,4 +1,4 @@
-# weather
+# weather __init__.py
 
 from .weather import *
 from .errors import *

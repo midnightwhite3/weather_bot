@@ -23,7 +23,7 @@ def validate_sub_type(sub: str):
 
 def is_hour_greater(subscribers: list) -> list:
     """Returns list of subscribers with subbed_hour greater than current hour."""
-    subs = [sub for sub in subscribers if sub[2] >= my_utils.hour_now_str]
+    subs = [sub for sub in subscribers if sub[2] >= my_utils.hour_now_str()]
     return subs
 
 

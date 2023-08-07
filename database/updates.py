@@ -2,7 +2,7 @@
 # files in the future)
 
 import settings
-from connection import DBConnect
+from .connection import DBConnect
 
 ### INSERTIONS or functions which main idea is to save/update data. ###
 @DBConnect
