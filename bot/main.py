@@ -10,6 +10,7 @@ import weather
 import tasks
 import database
 from settings import logger, TELEGRAM_KEY, SUBS_PATH, SUB_TYPE
+import validators
 
 
 
@@ -28,9 +29,10 @@ def weather_msg_conditional(update, context, weather_func, weather_type: str, da
     """
     user_id = update.message.from_user.id
     user_msg = context.args
-    if len(user_msg) == 0:
-        return update.message.reply_text("You need to enter city name.")
-    elif len(user_msg) > 1:
+    # if len(user_msg) == 0:
+    #     return update.message.reply_text("You need to enter city name.")
+    validators.is_city_input(user_msg, update) # replies two err msgs, fix
+    if len(user_msg) > 1:
         if not my_utils.has_number(user_msg[-1]):
             city = " ".join(user_msg)
             post_code = weather.find_postal_code(city, user_id=user_id)
@@ -154,11 +156,12 @@ def set_msg_hour_command(update, context):
     if not msg_hour:
         update.message.reply_text(f"""{msg_hour} is not valid. Make sure you use 24hr format. Example:\n06:00:00""")
         return
-    try:
-        database.set_msg_hour(user_id, msg_hour)
-    except Exception as err:
-        update.message.reply_text("DB error") # check this
-        return
+
+    # keep an eye on it !!!!!!!!!
+    database.set_msg_hour(user_id, msg_hour)
+    # except Exception as err:
+    #     update.message.reply_text("DB error") # check this
+    #     return
     db_change_event.set()
     logger.info(f"{user_id} updated 'send_msg_hour' as {msg_hour}.")
     update.message.reply_text(f"Messaging hour set successfully!")  # search DB to inform user if he is subbed or not)
